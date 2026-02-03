@@ -1,5 +1,6 @@
 import threading
 import time
+import os
 from queue import Queue
 
 import curses
@@ -69,27 +70,44 @@ class CoolConsoleUI:
     def _init_colors(self):
         curses.start_color()
         curses.use_default_colors()
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_CYAN)   # bouton normal
-        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_GREEN)  # bouton actif
-        curses.init_pair(3, curses.COLOR_YELLOW, -1)                 # texte status
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)   # STATUS
+        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_GREEN)  # Active
+        curses.init_pair(3, curses.COLOR_CYAN, -1)                   # Status Text
+        curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_CYAN)   # Title
+        curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_RED)    # REBOOT
+        curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_YELLOW) # LOGS
+        curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_MAGENTA)# QUIT
+        curses.init_pair(8, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Border
 
     def _build_buttons(self, h, w):
         """
-        Construit 3 gros boutons centrés verticalement.
+        Construit 4 gros boutons centrés verticalement.
         """
         self.buttons = []
-        btn_width = max(20, w - 4)
+        btn_width = max(20, w - 6)
         btn_height = 3
 
-        # positions verticales
-        start_row = h // 2 - 5
+        # positions verticales : 4 boutons * (3 haut + 1 espace) = 16 lignes
+        start_row = (h - 16) // 2
         if start_row < 3:
             start_row = 3
 
-        labels = ["STATUS", "LOGS", "QUIT"]
+        labels = ["STATUS", "LOGS", "REBOOT", "QUIT"]
         for i, label in enumerate(labels):
             row = start_row + i * (btn_height + 1)
             col = (w - btn_width) // 2
+            
+            # Couleur unique par bouton
+            color_idx = 1
+            if label == "STATUS":
+                color_idx = 1
+            elif label == "LOGS":
+                color_idx = 6
+            elif label == "REBOOT":
+                color_idx = 5
+            elif label == "QUIT":
+                color_idx = 7
+
             self.buttons.append({
                 "label": label,
                 "row": row,
@@ -97,21 +115,35 @@ class CoolConsoleUI:
                 "height": btn_height,
                 "width": btn_width,
                 "active": False,
+                "color_idx": color_idx
             })
 
     def _draw(self):
         self.stdscr.erase()
         h, w = self.stdscr.getmaxyx()
+        
+        # Bordure écran stylisée
+        try:
+            self.stdscr.attron(curses.color_pair(8) | curses.A_BOLD)
+            # Utilisation de caractères ASCII pour éviter les glitchs d'encodage (lettres q, x...)
+            self.stdscr.border('|', '|', '-', '-', '+', '+', '+', '+')
+            self.stdscr.attroff(curses.color_pair(8) | curses.A_BOLD)
+        except:
+            pass
 
         # Titre
-        title = " Raspberry Pi Touch Console Dashboard "
-        self.stdscr.attron(curses.A_BOLD)
-        self.stdscr.addstr(0, max(0, (w - len(title)) // 2), title)
-        self.stdscr.attroff(curses.A_BOLD)
+        title = " RPi Touch Interface v2.0 "
+        self.stdscr.attron(curses.color_pair(4) | curses.A_BOLD)
+        self.stdscr.addstr(0, max(2, (w - len(title)) // 2), title)
+        self.stdscr.attroff(curses.color_pair(4) | curses.A_BOLD)
 
         # Status bar
         self.stdscr.attron(curses.color_pair(3))
-        self.stdscr.addstr(h - 2, 1, f"Status: {self.status_message[:w-4]}")
+        status_text = f" Status: {self.status_message}"
+        # Tronquer pour éviter crash
+        if len(status_text) > w - 4:
+            status_text = status_text[:w-4]
+        self.stdscr.addstr(h - 2, 2, status_text)
         self.stdscr.attroff(curses.color_pair(3))
 
         # Construire les boutons selon la taille écran
@@ -119,7 +151,11 @@ class CoolConsoleUI:
 
         # Dessin des boutons
         for btn in self.buttons:
-            attr = curses.color_pair(2) if btn["active"] else curses.color_pair(1)
+            if btn["active"]:
+                attr = curses.color_pair(2) | curses.A_BOLD
+            else:
+                attr = curses.color_pair(btn.get("color_idx", 1))
+
             for r in range(btn["row"], btn["row"] + btn["height"]):
                 if 0 <= r < h:
                     self.stdscr.attron(attr)
@@ -131,7 +167,9 @@ class CoolConsoleUI:
             label_col = btn["col"] + max(0, (btn["width"] - len(label)) // 2)
             label_row = btn["row"] + btn["height"] // 2
             if 0 <= label_row < h:
+                self.stdscr.attron(attr | curses.A_BOLD)
                 self.stdscr.addstr(label_row, label_col, label)
+                self.stdscr.attroff(attr | curses.A_BOLD)
 
         self.stdscr.refresh()
 
@@ -182,6 +220,9 @@ class CoolConsoleUI:
             self.status_message = f"STATUS: Tout roule. Touch={row},{col}"
         elif label == "LOGS":
             self.status_message = "LOGS: (ici tu pourrais afficher des logs système, etc.)"
+        elif label == "REBOOT":
+            self.status_message = "REBOOT demandé... (simulation)"
+            # os.system("sudo reboot")
         elif label == "QUIT":
             self.status_message = "Quit demandé..."
             self.running = False
