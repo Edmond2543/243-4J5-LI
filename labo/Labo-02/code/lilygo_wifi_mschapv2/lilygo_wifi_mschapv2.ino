@@ -381,6 +381,10 @@ bool reconnectMQTT() {
 
 void setup() {
   Serial.begin(115200);
+  for(int i=0; i<10; i++) {
+    delay(500);
+    Serial.println("TEST SERIAL COMMUNICATION...");
+  }
   delay(2000);
 
   Serial.println();

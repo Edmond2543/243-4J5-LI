@@ -1,6 +1,7 @@
 # Configuration MQTT avec identifiants sensibles
-labo2/led-control/mqtt_config.py
-labo2/code/lilygo_lte_mqtt/auth.h
+labo/Labo-02/led-control/mqtt_config.py
+labo/Labo-02/code/lilygo_lte_mqtt/auth.h
+labo/Labo-02/code/lilygo_wifi_mschapv2/auth.h
 
 # Python
 __pycache__/

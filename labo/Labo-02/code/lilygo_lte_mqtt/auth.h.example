@@ -1,40 +1,26 @@
-// auth.h - Configuration LTE/Cellulaire
 #ifndef AUTH_H
 #define AUTH_H
 
-// ============================================================================
-// CONFIGURATION APN (Access Point Name) - CELLULAIRE
-// ============================================================================
-// ⚠️ IMPORTANT: Remplacez ces valeurs par celles de votre opérateur cellulaire
-//
-// Exemples d'APN par opérateur au Canada:
-//   - Bell:        "inet.bell.ca" ou "pda.bell.ca"
-//   - Rogers:      "internet.com" ou "ltemobile.apn"
-//   - Telus:       "sp.telus.com" ou "isp.telus.com"
-//   - Fido:        "internet.fido.ca"
-//   - Koodo:       "sp.koodo.com"
-//   - Virgin:      "media.bell.ca"
-//   - Videotron:   "media.videotron"
-//
-// La plupart des opérateurs canadiens n'exigent pas de username/password
-// ============================================================================
+#define WIFI_SECURITY_WPA2_ENTERPRISE
 
-const char APN[] = "internet.com";      // ⚠️ À remplacer par votre APN
-const char APN_USER[] = "";             // Généralement vide au Canada
-const char APN_PASS[] = "";             // Généralement vide au Canada
+// Configuration WiFi Enterprise
+const char* WIFI_SSID = "climoilou";
+const char* EAP_IDENTITY = "VOTRE_ID";
+const char* EAP_USERNAME = "VOTRE_USER";
+const char* EAP_PASSWORD = "VOTRE_PASSWORD_WIFI";
 
-// ============================================================================
-// CONFIGURATION MQTT
-// ============================================================================
+// Configuration APN (Access Point Name) - LTE
+const char APN[] = "internet.keepgo.com";  
+const char APN_USER[] = "";         
+const char APN_PASS[] = "";         
 
-const char MQTT_BROKER[] = "mqtt.edxo.ca";
-const int  MQTT_PORT = 1883;  // Port standard MQTT (non-SSL via LTE)
+// Configuration MQTT
+const char MQTT_BROKER[] = "mqtt.edmondguenette.org";
+const int  MQTT_PORT = 1883;
 const char MQTT_USER[] = "esp_user";
-const char MQTT_PASS[] = "YOUR_PASSWORD_HERE";  // ⚠️ À remplacer par votre mot de passe MQTT
+const char MQTT_PASS[] = "VOTRE_PASSWORD_MQTT";
 
-// Device ID - Identifiant unique de l'appareil
-// Format suggéré: "esp32-XXXXXX" (6 derniers caractères de l'IMEI ou personnalisé)
-// Cet identifiant sera utilisé comme préfixe pour tous les topics MQTT
-const char MQTT_CLIENT_ID[] = "esp32-lte";     // ⚠️ À personnaliser selon votre appareil
+// Identifiant UNIQUE pour l'appareil (WiFi et LTE)
+const char* MQTT_CLIENT_ID = "esp32-200701";
 
 #endif // AUTH_H
