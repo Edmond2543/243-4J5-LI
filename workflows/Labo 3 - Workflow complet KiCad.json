@@ -108,7 +108,7 @@
       "is_enabled": true,
       "parameters": {
         "tools": null,
-        "message": "## 0. Environnement de travail\n\n> **Lien avec le Labo 1:** Tu as appris à utiliser Git en ligne de commande sur le Raspberry Pi (section 4 du Labo 1). Dans ce labo, nous utilisons **GitHub Desktop** sur Windows, qui offre une interface graphique pour les mêmes opérations.\n\n### Correspondance Git CLI ↔ GitHub Desktop\n\n| Git CLI (Labo 1 - Raspberry Pi) | GitHub Desktop (Labo 3 - Windows) |\n|---------------------------------|-----------------------------------|\n| `git clone <url>` | Fichier → Cloner un dépôt |\n| `git checkout -b prenom-nom` | Branche actuelle → Nouvelle branche |\n| `git status` | Onglet **Modifications** (liste automatique) |\n| `git add .` | Cases à cocher dans Modifications (auto) |\n| `git commit -m \"message\"` | Résumé + **Commiter vers branche** |\n| `git push origin branche` | **Pousser origin** |\n| `git fetch origin` | **Récupérer origin** |\n| `git pull origin main` | **Tirer origin** |\n\n### 0.1 Cloner ton fork\n\nAu Labo 1, tu as créé un **fork** du dépôt du cours sur ton compte GitHub.\n\n1. Dans GitHub Desktop: **Fichier → Cloner un dépôt...**\n2. Onglet **GitHub.com** — ton fork `243-4J5-LI` devrait apparaître\n3. Sinon, onglet **URL** et entrer: `https://github.com/VOTRE-USERNAME/243-4J5-LI`\n4. Choisir un emplacement local (ex: `C:\\Users\\VotreNom\\Documents\\GitHub\\`)\n5. Cliquer sur **Cloner**\n\n### 0.2 Travailler sur ta branche\n\nAssure-toi d'être sur ta branche `prenom-nom`:\n\n1. Dans GitHub Desktop, cliquer sur **Branche actuelle** (en haut)\n2. Sélectionner ta branche `prenom-nom`\n\nSi ta branche n'existe pas encore:\n1. **Branche actuelle** → **Nouvelle branche**\n2. Nommer: `prenom-nom` (ex: `jean-tremblay`)\n3. Cliquer sur **Créer une branche**\n\n### 0.3 Structure du projet\n\nCréer ton projet KiCad dans le dépôt:\n\n```\nC:\\Users\\VotreNom\\Documents\\GitHub\\243-4J5-LI\\\n└── labo3-kicad/          ← Ton dossier de travail\n    ├── labo3-kicad.kicad_pro\n    ├── labo3-kicad.kicad_sch\n    ├── labo3-kicad.kicad_pcb\n    └── gerbers/\n```\n\n---\n\nClone ton fork et assure-toi d'être sur ta branche. Dis-moi quand c'est fait!",
+        "message": "## 0. Environnement de travail\n\n> **Lien avec le Labo 1:** Tu as appris à utiliser Git en ligne de commande sur le Raspberry Pi (section 4 du Labo 1). Dans ce labo, nous utilisons **GitHub Desktop** sur Windows, qui offre une interface graphique pour les mêmes opérations.\n\n### Correspondance Git CLI ↔ GitHub Desktop\n\n| Git CLI (Labo 1 - Raspberry Pi) | GitHub Desktop (Labo 3 - Windows) |\n|---------------------------------|-----------------------------------|\n| `git clone <url>` | Fichier → Cloner un dépôt |\n| `git checkout -b labo3/prenom-nom` | Branche actuelle → Nouvelle branche |\n| `git status` | Onglet **Modifications** (liste automatique) |\n| `git add .` | Cases à cocher dans Modifications (auto) |\n| `git commit -m \"message\"` | Résumé + **Commiter vers branche** |\n| `git push origin branche` | **Pousser origin** |\n| `git fetch origin` | **Récupérer origin** |\n| `git pull origin main` | **Tirer origin** |\n\n### 0.1 Cloner ton fork\n\nAu Labo 1, tu as créé un **fork** du dépôt du cours sur ton compte GitHub.\n\n1. Dans GitHub Desktop: **Fichier → Cloner un dépôt...**\n2. Onglet **GitHub.com** — ton fork `243-4J5-LI` devrait apparaître\n3. Sinon, onglet **URL** et entrer: `https://github.com/VOTRE-USERNAME/243-4J5-LI`\n4. Choisir un emplacement local (ex: `C:\\Users\\VotreNom\\Documents\\GitHub\\`)\n5. Cliquer sur **Cloner**\n\n### 0.2 Créer ta branche pour ce labo\n\nChaque laboratoire utilise sa propre branche. Pour le Labo 3:\n\n1. Dans GitHub Desktop, vérifier d'abord que tu es sur **main** (Branche actuelle en haut)\n2. **Branche actuelle** → **Nouvelle branche**\n3. Nommer: `labo3/prenom-nom` (ex: `labo3/jean-tremblay`)\n4. S'assurer que la branche est créée **depuis main**\n5. Cliquer sur **Créer une branche**\n\n> Cette convention (`labo3/prenom-nom`) permet de retrouver facilement le travail de chaque étudiant par laboratoire.\n\n### 0.3 Structure du projet\n\nCréer ton projet KiCad dans le dépôt:\n\n```\nC:\\Users\\VotreNom\\Documents\\GitHub\\243-4J5-LI\\\n└── labo3-kicad/          ← Ton dossier de travail\n    ├── labo3-kicad.kicad_pro\n    ├── labo3-kicad.kicad_sch\n    ├── labo3-kicad.kicad_pcb\n    └── gerbers/\n```\n\n---\n\nClone ton fork et crée ta branche `labo3/prenom-nom` depuis main. Dis-moi quand c'est fait!",
         "simulate_stream_delay_ms": 5
       },
       "metadata": {
@@ -130,7 +130,7 @@
           "slug": "pret-a-debuter",
           "source": "library",
           "variables": {
-            "text": "Mon dépôt est cloné et je suis sur ma branche!"
+            "text": "Mon dépôt est cloné et ma branche labo3/prenom-nom est créée!"
           }
         }
       },
@@ -268,7 +268,7 @@
       "is_enabled": true,
       "parameters": {
         "tools": null,
-        "message": "## 3. Capture schématique\n\n### 3.1 Ouvrir l'éditeur de schéma\n\n1. Double-cliquer sur `labo3-kicad.kicad_sch` dans le gestionnaire de projet\n2. L'éditeur **Eeschema** s'ouvre\n\n### 3.2 Raccourcis clavier essentiels\n\n| Raccourci | Action |\n|-----------|--------|\n| `A` | Ajouter un symbole |\n| `P` | Ajouter une alimentation (power) |\n| `W` | Tracer un fil (wire) |\n| `L` | Ajouter un label |\n| `R` | Rotation (pendant le placement) |\n| `M` | Déplacer |\n| `C` | Copier |\n| `E` | Éditer les propriétés |\n| `Delete` | Supprimer |\n| `Ctrl+Z` | Annuler |\n| `F` | Zoom fit |\n\n### 3.3 Ajouter les symboles\n\n1. **Appuyer sur `A`** pour ouvrir la bibliothèque de symboles\n2. Rechercher et placer:\n\n| Composant | Bibliothèque | Symbole |\n|-----------|--------------|--------|\n| Résistance | Device | R |\n| LED | Device | LED |\n| Connecteur | Connector_Generic | Conn_01x03 |\n\n3. **Symboles d'alimentation** (appuyer sur `P`):\n   - `+3.3V` (ou `+3V3`)\n   - `GND`\n\n### 3.4 Éditer les valeurs\n\n1. Double-cliquer sur un composant ou appuyer sur `E`\n2. Modifier le champ **Valeur**:\n\n| Référence | Valeur |\n|-----------|--------|\n| R1 | 330 |\n| D1 | LED_Rouge |\n| J1 | Conn_3pin |\n\n### 3.5 Connecter les composants\n\n1. **Appuyer sur `W`** pour tracer des fils\n2. Cliquer sur une broche, puis sur la broche de destination\n\n**Connexions à réaliser:**\n- Broche 1 du connecteur (VCC) → symbole `+3.3V`\n- Broche 1 du connecteur → une patte de R1\n- Autre patte de R1 → Anode de la LED (triangle)\n- Cathode de la LED (barre) → symbole `GND`\n- Broche 3 du connecteur → symbole `GND`\n\n### 3.6 Annoter les composants\n\n1. **Outils → Annoter la schématique...**\n2. Options: Schématique entière, de gauche à droite\n3. Cliquer sur **Annoter**\n\n---\n\nRéalise le schéma avec tous les composants et connexions. Dis-moi quand c'est fait!",
+        "message": "## 3. Capture schématique\n\n### 3.1 Ouvrir l'éditeur de schéma\n\n1. Double-cliquer sur `labo3-kicad.kicad_sch` dans le gestionnaire de projet\n2. L'éditeur **Eeschema** s'ouvre\n\n### 3.2 Raccourcis clavier essentiels\n\n| Raccourci | Action |\n|-----------|--------|\n| `A` | Ajouter un symbole |\n| `P` | Ajouter une alimentation (power) |\n| `W` | Tracer un fil (wire) |\n| `L` | Ajouter un label |\n| `R` | Rotation (pendant le placement) |\n| `M` | Déplacer |\n| `C` | Copier |\n| `E` | Éditer les propriétés |\n| `Delete` | Supprimer |\n| `Ctrl+Z` | Annuler |\n| `F` | Zoom fit |\n\n### 3.3 Ajouter les symboles\n\n1. **Appuyer sur `A`** pour ouvrir la bibliothèque de symboles\n2. Rechercher et placer:\n\n| Composant | Bibliothèque | Symbole |\n|-----------|--------------|--------|\n| Résistance | Device | R |\n| LED | Device | LED |\n| Connecteur | Connector_Generic | Conn_01x03 |\n\n3. **Symboles d'alimentation** (appuyer sur `P`):\n   - `+3.3V` (ou `+3V3`) — à connecter à la broche VCC du connecteur J1\n   - `GND` — à connecter à la broche GND du connecteur J1\n   - `PWR_FLAG` — **placer un sur le net +3.3V et un sur le net GND**\n\n> Pourquoi le PWR_FLAG ? Ton connecteur J1 est une source d'alimentation externe. KiCad ne peut pas le détecter automatiquement : sans PWR_FLAG, l'ERC signalera que ces nets ne sont pas pilotés. Le PWR_FLAG lui indique qu'une source externe prend en charge ce net.\n\n### 3.4 Éditer les valeurs\n\n1. Double-cliquer sur un composant ou appuyer sur `E`\n2. Modifier le champ **Valeur**:\n\n| Référence | Valeur |\n|-----------|--------|\n| R1 | 330 |\n| D1 | LED_Rouge |\n| J1 | Conn_3pin |\n\n### 3.5 Connecter les composants\n\n1. **Appuyer sur `W`** pour tracer des fils\n2. Cliquer sur une broche, puis sur la broche de destination\n\n**Connexions à réaliser:**\n- Broche 1 du connecteur (VCC) → symbole `+3.3V`\n- Broche 1 du connecteur → une patte de R1\n- Autre patte de R1 → Anode de la LED (triangle)\n- Cathode de la LED (barre) → symbole `GND`\n- Broche 3 du connecteur → symbole `GND`\n\n### 3.6 Annoter les composants\n\n1. **Outils → Annoter la schématique...**\n2. Options: Schématique entière, de gauche à droite\n3. Cliquer sur **Annoter**\n\n---\n\nRéalise le schéma avec tous les composants et connexions. Dis-moi quand c'est fait!",
         "simulate_stream_delay_ms": 5
       },
       "metadata": {
@@ -366,7 +366,7 @@
       "is_enabled": true,
       "parameters": {
         "tools": null,
-        "message": "### 📝 Question de compréhension\n\nÀ quoi sert le **PWR_FLAG** dans KiCad et pourquoi est-il nécessaire quand l'alimentation provient d'un connecteur externe?",
+        "message": "### 📝 Question de compréhension\n\nTon connecteur **J1** fournit le VCC et le GND au circuit. Pourquoi dois-tu placer un **PWR_FLAG** sur ces nets dans le schéma?",
         "simulate_stream_delay_ms": 5
       },
       "metadata": {
@@ -421,8 +421,8 @@
       "position": 44,
       "is_enabled": true,
       "parameters": {
-        "model": "gpt-5-nano",
-        "instructions": "# Rôle\nÉvaluateur. Produis uniquement un JSON strict.\n\n# Question\n« À quoi sert le PWR_FLAG dans KiCad et pourquoi est-il nécessaire avec un connecteur externe? »\n\n# Critères\nLa réponse doit mentionner:\n- Le PWR_FLAG indique qu'une alimentation externe sera fournie\n- Sans ce flag, KiCad pense qu'aucune source ne \"pilote\" la ligne d'alimentation\n- Nécessaire quand l'alimentation vient d'un connecteur (source externe au schéma)\n- Évite l'erreur \"not driven by any pin\"\n\n# Règles\n- Si correct → `\"ok\": true`\n- Sinon → `\"ok\": false`",
+        "model": "gpt-5.2",
+        "instructions": "# Rôle\nÉvaluateur. Produis uniquement un JSON strict.\n\n# Question\n« Le connecteur J1 fournit le VCC et le GND. Pourquoi faut-il placer un PWR_FLAG sur ces nets? »\n\n# Critères\nUn seul élément essentiel : la réponse doit indiquer que le connecteur est une source externe et que KiCad ne peut pas le détecter automatiquement — sans PWR_FLAG, l'ERC signale que le net d'alimentation n'est pas piloté.\nAccepter toute formulation qui exprime cette idée (source externe, KiCad ne sait pas d'où vient l'alimentation, évite l'erreur ERC, etc.).\n\n# Règles\n- Si correct → `\"ok\": true`\n- Sinon → `\"ok\": false`",
         "model_provider": "openai",
         "model_settings": {
           "text": { "verbosity": "low" },
@@ -567,8 +567,8 @@
       "position": 51,
       "is_enabled": true,
       "parameters": {
-        "model": "gpt-5-nano",
-        "instructions": "Aide l'utilisateur à comprendre le rôle du PWR_FLAG. Donne un indice sur le fait que KiCad doit savoir d'où vient l'alimentation, sans donner la réponse complète.",
+        "model": "gpt-5.2",
+        "instructions": "Aide l'utilisateur à comprendre pourquoi le connecteur J1 nécessite un PWR_FLAG. Oriente vers le fait que KiCad ne peut pas détecter automatiquement qu'un connecteur externe fournit l'alimentation. Ne donne pas la réponse complète.",
         "model_provider": "openai",
         "model_settings": {
           "text": { "verbosity": "low" },
@@ -770,7 +770,7 @@
       "is_enabled": true,
       "parameters": {
         "tools": null,
-        "message": "## 7. Placement des composants\n\n### 7.1 Principes de placement\n\n1. **Placer les connecteurs** en premier (ils définissent l'interface mécanique)\n2. **Regrouper par fonction**: alimentation, entrées, sorties\n3. **Minimiser les croisements** de pistes\n4. **Orientation cohérente**: tous les composants SMD dans le même sens si possible\n\n### 7.2 Raccourcis utiles\n\n| Raccourci | Action |\n|-----------|--------|\n| `M` | Déplacer |\n| `R` | Rotation (90°) |\n| `F` | Flip (changer de face) |\n| `E` | Éditer propriétés |\n| `X` | Routage de piste |\n| `V` | Ajouter un via (pendant le routage) |\n| `Escape` | Annuler l'action en cours |\n\n### 7.3 Placement suggéré\n\n```\n┌─────────────────────────────┐\n│                             │\n│   ┌─────┐                   │\n│   │ J1  │    [R1]──[LED1]   │\n│   │ 1 2 │                   │\n│   │ 3   │                   │\n│   └─────┘                   │\n│                             │\n└─────────────────────────────┘\n```\n\n### 7.4 Vérifier le ratsnest\n\nLe **ratsnest** (chevelu) montre les connexions à router:\n- Lignes fines = connexions non routées\n- **Affichage → Ratsnest** pour afficher/masquer\n\n---\n\n## 8. Routage\n\n### 8.1 Routage manuel\n\n1. Appuyer sur `X` ou sélectionner l'outil de routage\n2. Cliquer sur un pad pour commencer\n3. Tracer la piste jusqu'au pad de destination\n4. Cliquer pour fixer les points de passage\n\n### 8.2 Techniques de routage\n\n**Changer de couche:**\n- Appuyer sur `V` pendant le routage pour ajouter un via\n\n**Largeur de piste:**\n- Pistes d'alimentation plus larges (0.4-0.5 mm)\n- Pistes de signal standard (0.25 mm)\n\n**Bonnes pratiques:**\n- Éviter les angles à 90° (préférer 45°)\n- Pistes courtes et directes\n- Ne pas passer entre les pads d'un composant SMD\n\n### 8.3 Plan de masse (Ground Plane)\n\n1. Sélectionner la couche **B.Cu** (face arrière)\n2. **Placer → Zone remplie** (ou icône)\n3. Dans la boîte de dialogue:\n   - Net: `GND`\n   - Couche: B.Cu\n   - Clearance: 0.3 mm\n4. Dessiner le contour de la zone (suivre Edge.Cuts)\n5. Appuyer sur `B` pour remplir les zones\n\n---\n\nPlace les composants et route toutes les connexions. Ajoute un plan de masse sur B.Cu. Dis-moi quand c'est fait!",
+        "message": "## 7. Placement des composants\n\n### 7.1 Principes de placement\n\n1. **Placer les connecteurs** en premier (ils définissent l'interface mécanique)\n2. **Regrouper par fonction**: alimentation, entrées, sorties\n3. **Minimiser les croisements** de pistes\n4. **Orientation cohérente**: tous les composants SMD dans le même sens si possible\n\n### 7.2 Raccourcis utiles\n\n| Raccourci | Action |\n|-----------|--------|\n| `M` | Déplacer |\n| `R` | Rotation (90°) |\n| `F` | Flip (changer de face) |\n| `E` | Éditer propriétés |\n| `X` | Routage de piste |\n| `V` | Ajouter un via (pendant le routage) |\n| `Escape` | Annuler l'action en cours |\n\n### 7.3 Vérifier le ratsnest\n\nLe **ratsnest** (chevelu) montre les connexions à router:\n- Lignes fines = connexions non routées\n- **Affichage → Ratsnest** pour afficher/masquer\n\n---\n\n## 8. Routage\n\n### 8.1 Routage manuel\n\n1. Appuyer sur `X` ou sélectionner l'outil de routage\n2. Cliquer sur un pad pour commencer\n3. Tracer la piste jusqu'au pad de destination\n4. Cliquer pour fixer les points de passage\n\n### 8.2 Techniques de routage\n\n**Changer de couche:**\n- Appuyer sur `V` pendant le routage pour ajouter un via\n\n**Largeur de piste:**\n- Pistes d'alimentation plus larges (0.4-0.5 mm)\n- Pistes de signal standard (0.25 mm)\n\n**Bonnes pratiques:**\n- Éviter les angles à 90° (préférer 45°)\n- Pistes courtes et directes\n- Ne pas passer entre les pads d'un composant SMD\n\n### 8.3 Plan de masse (Ground Plane)\n\n1. Sélectionner la couche **B.Cu** (face arrière)\n2. **Placer → Zone remplie** (ou icône)\n3. Dans la boîte de dialogue:\n   - Net: `GND`\n   - Couche: B.Cu\n   - Clearance: 0.3 mm\n4. Dessiner le contour de la zone (suivre Edge.Cuts)\n5. Appuyer sur `B` pour remplir les zones\n\n---\n\nPlace les composants et route toutes les connexions. Ajoute un plan de masse sur B.Cu. Dis-moi quand c'est fait!",
         "simulate_stream_delay_ms": 5
       },
       "metadata": {
@@ -923,8 +923,8 @@
       "position": 94,
       "is_enabled": true,
       "parameters": {
-        "model": "gpt-5-nano",
-        "instructions": "# Rôle\nÉvaluateur. Produis uniquement un JSON strict.\n\n# Question\n« Différence entre ERC et DRC? À quelle étape chacun est-il exécuté? »\n\n# Critères\nLa réponse doit mentionner:\n- ERC: vérification des règles électriques (connexions, types de broches, alimentations)\n- ERC: exécuté sur le schéma (schématique), avant le layout PCB\n- DRC: vérification des règles de conception physique (espacement, largeur pistes, perçages)\n- DRC: exécuté sur le PCB, après le routage\n\n# Règles\n- Si correct → `\"ok\": true`\n- Sinon → `\"ok\": false`",
+        "model": "gpt-5.2",
+        "instructions": "# Rôle\nÉvaluateur. Produis uniquement un JSON strict.\n\n# Question\n« Différence entre ERC et DRC? »\n\n# Critères\nDeux éléments suffisent:\n- ERC = vérification électrique (schéma, connexions, broches)\n- DRC = vérification physique/géométrique (PCB, espacements, pistes)\nAccepter toute formulation qui exprime cette distinction, même sans mentionner à quelle étape exacte chacun est lancé.\n\n# Règles\n- Si correct → `\"ok\": true`\n- Sinon → `\"ok\": false`",
         "model_provider": "openai",
         "model_settings": {
           "text": { "verbosity": "low" },
@@ -1069,7 +1069,7 @@
       "position": 101,
       "is_enabled": true,
       "parameters": {
-        "model": "gpt-5-nano",
+        "model": "gpt-5.2",
         "instructions": "Aide l'utilisateur à comprendre la différence entre ERC et DRC. Donne un indice sur le fait que l'un concerne le schéma (électrique) et l'autre le PCB (physique), sans donner la réponse complète.",
         "model_provider": "openai",
         "model_settings": {
@@ -1192,7 +1192,7 @@
       "is_enabled": true,
       "parameters": {
         "tools": null,
-        "message": "## 14. Exercice pratique — Livrables\n\n### 14.1 À réaliser\n\nTu as créé un PCB fonctionnel avec:\n- 1 connecteur 3 broches (VCC, Signal, GND)\n- 1 résistance 330Ω\n- 1 LED\n\nC'est un circuit minimaliste qui valide la maîtrise du workflow complet.\n\n### 14.2 Livrables\n\nÀ la fin du labo, tu dois avoir:\n\n- [ ] Schéma complet avec ERC = 0 erreurs\n- [ ] PCB routé avec DRC = 0 erreurs\n- [ ] Capture d'écran de la vue 3D\n- [ ] Dossier `gerbers/` avec tous les fichiers\n- [ ] Fichier BOM (CSV)\n\n### 14.3 Structure de remise\n\n```\nlabo3-kicad/\n├── labo3-kicad.kicad_pro\n├── labo3-kicad.kicad_sch\n├── labo3-kicad.kicad_pcb\n├── gerbers/\n│   ├── labo3-kicad-F_Cu.gtl\n│   ├── labo3-kicad-B_Cu.gbl\n│   ├── labo3-kicad-F_SilkS.gto\n│   ├── labo3-kicad-F_Mask.gts\n│   ├── labo3-kicad-B_Mask.gbs\n│   ├── labo3-kicad-Edge_Cuts.gm1\n│   └── labo3-kicad.drl\n├── bom.csv\n└── screenshots/\n    ├── schema.png\n    ├── pcb-2d.png\n    └── pcb-3d.png\n```\n\n### 14.4 Workflow Git quotidien (rappel)\n\n**À la fin de chaque séance:**\n1. Dans GitHub Desktop, tes modifications apparaissent dans l'onglet **Modifications**\n2. Écrire un résumé (ex: \"Schéma terminé, début routage\")\n3. Cliquer sur **Commiter vers prenom-nom**\n4. Cliquer sur **Pousser origin** pour envoyer vers GitHub\n\n---\n\n### Checklist finale\n\n- [ ] Projet KiCad sauvegardé\n- [ ] ERC passé sans erreurs\n- [ ] DRC passé sans erreurs\n- [ ] Gerbers générés et vérifiés\n- [ ] BOM exportée\n- [ ] Captures d'écran prises\n- [ ] Commit et push vers GitHub\n\n---\n\nVérifie que tu as tous les livrables et fais ton commit final. Dis-moi quand tout est prêt!",
+        "message": "## 14. Exercice pratique — Livrables\n\n### 14.1 À réaliser\n\nTu as créé un PCB fonctionnel avec:\n- 1 connecteur 3 broches (VCC, Signal, GND)\n- 1 résistance 330Ω\n- 1 LED\n\nC'est un circuit minimaliste qui valide la maîtrise du workflow complet.\n\n### 14.2 Livrables\n\nÀ la fin du labo, tu dois avoir:\n\n- [ ] Schéma complet avec ERC = 0 erreurs\n- [ ] PCB routé avec DRC = 0 erreurs\n- [ ] Capture d'écran de la vue 3D\n- [ ] Dossier `gerbers/` avec tous les fichiers\n- [ ] Fichier BOM (CSV)\n\n### 14.3 Structure de remise\n\n```\nlabo3-kicad/\n├── labo3-kicad.kicad_pro\n├── labo3-kicad.kicad_sch\n├── labo3-kicad.kicad_pcb\n├── gerbers/\n│   ├── labo3-kicad-F_Cu.gtl\n│   ├── labo3-kicad-B_Cu.gbl\n│   ├── labo3-kicad-F_SilkS.gto\n│   ├── labo3-kicad-F_Mask.gts\n│   ├── labo3-kicad-B_Mask.gbs\n│   ├── labo3-kicad-Edge_Cuts.gm1\n│   └── labo3-kicad.drl\n├── bom.csv\n└── screenshots/\n    ├── schema.png\n    ├── pcb-2d.png\n    └── pcb-3d.png\n```\n\n### 14.4 Workflow Git quotidien (rappel)\n\n**À la fin de chaque séance:**\n1. Dans GitHub Desktop, tes modifications apparaissent dans l'onglet **Modifications**\n2. Écrire un résumé (ex: \"Schéma terminé, début routage\")\n3. Cliquer sur **Commiter vers labo3/prenom-nom**\n4. Cliquer sur **Pousser origin** pour envoyer vers GitHub\n\n---\n\n### Checklist finale\n\n- [ ] Projet KiCad sauvegardé\n- [ ] ERC passé sans erreurs\n- [ ] DRC passé sans erreurs\n- [ ] Gerbers générés et vérifiés\n- [ ] BOM exportée\n- [ ] Captures d'écran prises\n- [ ] Commit et push vers GitHub\n\n---\n\nVérifie que tu as tous les livrables et fais ton commit final. Dis-moi quand tout est prêt!",
         "simulate_stream_delay_ms": 5
       },
       "metadata": {
@@ -1272,7 +1272,7 @@
       "is_enabled": true,
       "parameters": {
         "tools": null,
-        "message": "## Félicitations!\n\nTu as terminé le **Labo 3 — Workflow complet KiCad**!\n\n### Ce que tu as accompli:\n\n- Utiliser GitHub Desktop pour gérer tes fichiers sur ta branche\n- Créer un projet KiCad et naviguer dans l'interface\n- Réaliser une capture schématique complète (symboles, connexions, annotations)\n- Exécuter et corriger les erreurs ERC (Electrical Rules Check)\n- Associer les empreintes (footprints) aux symboles\n- Placer et router un PCB 2 couches avec plan de masse\n- Configurer et exécuter le DRC (Design Rules Check)\n- Générer les fichiers de fabrication (Gerbers, drill, BOM)\n\n### Workflow maîtrisé:\n\n```\n📋 Schématique → ERC → 🔗 Footprints → 🖥️ Layout PCB → DRC → 📦 Gerbers\n```\n\n### Concepts clés:\n\n- **ERC:** Vérification électrique sur le schéma\n- **DRC:** Vérification physique sur le PCB\n- **PWR_FLAG:** Indiquer les sources d'alimentation externes\n- **Gerber:** Format standard pour la fabrication de PCB\n- **Footprint:** Empreinte physique d'un composant (SMD vs THT)\n\n---\n\n**Prochain labo:** Projet de mi-session — Tu appliqueras ces compétences pour concevoir ton shield LilyGO A7670G avec 2 DELs, 2 boutons, 2 potentiomètres et un accéléromètre.\n\nBon travail!",
+        "message": "## Félicitations!\n\nTu as terminé le **Labo 3 — Workflow complet KiCad**!\n\n### Ce que tu as accompli:\n\n- Utiliser GitHub Desktop pour gérer tes fichiers sur ta branche\n- Créer un projet KiCad et naviguer dans l'interface\n- Réaliser une capture schématique complète (symboles, connexions, annotations)\n- Exécuter et corriger les erreurs ERC (Electrical Rules Check)\n- Associer les empreintes (footprints) aux symboles\n- Placer et router un PCB 2 couches avec plan de masse\n- Configurer et exécuter le DRC (Design Rules Check)\n- Générer les fichiers de fabrication (Gerbers, drill, BOM)\n\n### Workflow maîtrisé:\n\n```\n📋 Schématique → ERC → 🔗 Footprints → 🖥️ Layout PCB → DRC → 📦 Gerbers\n```\n\n### Concepts clés:\n\n- **ERC:** Vérification électrique sur le schéma\n- **DRC:** Vérification physique sur le PCB\n- **PWR_FLAG:** Indiquer les sources d'alimentation externes\n- **Gerber:** Format standard pour la fabrication de PCB\n- **Footprint:** Empreinte physique d'un composant (SMD vs THT)\n\n---\n\n### Si tu as terminé avant la fin de la séance\n\nTu peux avancer sur:\n\n- **Breadboard** — Commence à monter le prototype de ton projet de mi-session avec tes composants assignés (boutons, LEDs, potentiomètres, MPU6050)\n- **Programmation** — Reprends les étapes de programmation vues aux semaines précédentes et teste tes composants sur le Raspberry Pi ou le LilyGO\n- **Choix de projet** — Revois l'énoncé du projet de mi-session et confirme ton choix de composants et de fonctionnalités\n\n---\n\nBon travail!",
         "simulate_stream_delay_ms": 5
       },
       "metadata": {
@@ -1516,8 +1516,8 @@
       "id": 5014,
       "source": "condition-code-prof-q1",
       "target": "assistant-message-q1-ok",
-      "condition": "1234",
-      "metadata": { "label": "1234", "order": 53 }
+      "condition": "PCB1",
+      "metadata": { "label": "PCB1", "order": 53 }
     },
     {
       "id": 5015,
@@ -1712,8 +1712,8 @@
       "id": 9014,
       "source": "condition-code-prof-q2",
       "target": "assistant-message-q2-ok",
-      "condition": "1234",
-      "metadata": { "label": "1234", "order": 103 }
+      "condition": "PCBA",
+      "metadata": { "label": "PCBA", "order": 103 }
     },
     {
       "id": 9015,

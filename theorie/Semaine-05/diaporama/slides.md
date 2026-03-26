@@ -4,7 +4,7 @@ background: https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920
 title: 243-4J5-LI - Objets connectés - Semaine 5
 info: |
   ## Objets connectés
-  Semaine 5 - Projet de mi-session : Shield LilyGO A7670G
+  Semaine 5 - Introduction à KiCad et dessin de PCB
 
   Cégep Limoilou - Session H26
 class: text-center
@@ -13,12 +13,13 @@ drawings:
   persist: false
 transition: slide-left
 mdc: true
+download: true
 ---
 
 # Objets connectés
 ## 243-4J5-LI
 
-Semaine 5 - Projet de mi-session : Shield LilyGO A7670G
+Semaine 5 - Introduction à KiCad et dessin de PCB
 
 <div class="pt-12">
   <span class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
@@ -47,19 +48,20 @@ layout: section
 
 - **Semaine 1** : Infrastructure distante
   - RPi + SSH + Cloudflare
-  - Git + Arduino CLI
+  - Git + Gemini-cli + Arduino CLI
 
 - **Semaine 2** : Communication
   - MQTT + Mosquitto
   - WiFi + WebSocket (WSS)
 
 - **Semaine 3** : Robustesse
-  - LTE cellulaire + TLS
+  - LTE cellulaire
+  - Sécurité TLS
   - Reconnexion automatique
 
-- **Semaine 4** : Conception PCB
-  - Introduction à KiCad
-  - Workflow schéma → PCB
+- **Semaine 4** : Workflow KiCad (labo pratique)
+  - Création de projet KiCad
+  - Schéma → PCB → Gerbers
 
 </v-clicks>
 
@@ -69,27 +71,23 @@ layout: section
 
 <v-click>
 
-```mermaid {scale: 0.35}
-graph TB
-    subgraph "Infrastructure (Sem. 1)"
+```mermaid {scale: 0.4}
+graph LR
+    subgraph "Infrastructure"
         YOU[Vous] -->|SSH| CF[Cloudflare]
         CF --> RPI[RPi]
     end
 
-    subgraph "Communication (Sem. 2-3)"
-        LILY[LilyGO] -->|WiFi/LTE| MOSQ[Mosquitto]
-        MOSQ --> RPI
-    end
-
-    subgraph "Conception (Sem. 4-5)"
-        BREAD[Breadboard] --> KICAD[KiCad]
-        KICAD --> PCB[PCB]
+    subgraph "Communication"
+        RPI --> MOSQ[Mosquitto]
+        LILY[LilyGO] -->|WiFi/LTE| CF2[CF]
+        CF2 <-->|TLS| MOSQ
     end
 
     style YOU fill:#6f6
+    style RPI fill:#69f
     style LILY fill:#f96
-    style KICAD fill:#69f
-    style PCB fill:#f9f
+    style MOSQ fill:#f9f
 ```
 
 </v-click>
@@ -98,7 +96,7 @@ graph TB
 
 <div class="mt-2 p-2 bg-green-500 bg-opacity-20 rounded-lg text-center text-sm">
 
-**Aujourd'hui** : Prototype breadboard complet + documentation!
+Notre système IoT est **fonctionnel** et **robuste**!
 
 </div>
 
@@ -110,52 +108,49 @@ graph TB
 
 ---
 
-# Où en sommes-nous?
+# Mais regardez notre prototype...
 
-### Le projet de mi-session en perspective
+<div class="grid grid-cols-2 gap-6">
 
-<div class="grid grid-cols-3 gap-3">
+<div>
 
-<div class="p-3 bg-green-500 bg-opacity-20 rounded-lg">
+### L'état actuel
 
-### Fait (Sem. 1-4)
+<v-clicks>
+
+- Fils partout sur le **breadboard**
+- Connexions **fragiles**
+- Impossible à **déplacer**
+- Pas **professionnel**
+- Difficile à **reproduire**
+
+</v-clicks>
 
 <v-click>
 
-- Infrastructure RPi
-- Communication MQTT
-- Sécurité TLS/LTE
-- Bases KiCad
+<div class="mt-4 p-2 bg-red-500 bg-opacity-20 rounded-lg text-sm">
+
+**Problème** : Comment transformer ce prototype en produit fiable?
+
+</div>
 
 </v-click>
 
 </div>
 
-<div class="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
-
-### Cette semaine (5)
+<div>
 
 <v-click>
 
-- Prototype breadboard
-- Code de test complet
-- Interface tactile
-- Documentation GitHub
+### Breadboard vs PCB
 
-</v-click>
-
-</div>
-
-<div class="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
-
-### À venir (Sem. 6-7)
-
-<v-click>
-
-- Schéma KiCad complet
-- Routage du PCB
-- Génération Gerbers
-- Envoi fabrication
+| Breadboard | PCB |
+|------------|-----|
+| Prototype rapide | Production |
+| Connexions fragiles | Soudures permanentes |
+| Fils volants | Pistes cuivrées |
+| Unique | Reproductible |
+| Amateur | Professionnel |
 
 </v-click>
 
@@ -163,11 +158,39 @@ graph TB
 
 </div>
 
+---
+
+# Notre chaîne s'agrandit encore!
+
+```mermaid {scale: 0.65}
+graph LR
+    subgraph "Sem. 1-3 : Logiciel"
+        CODE[Code] --> COMM[Communication]
+        COMM --> SEC[Sécurité]
+    end
+
+    subgraph "Sem. 5+ : Matériel"
+        BREAD[Breadboard] -->|KiCad| SCH[Schéma]
+        SCH --> PCB[PCB]
+        PCB --> FAB[Fabrication]
+    end
+
+    SEC -.-> BREAD
+
+    style CODE fill:#69f
+    style PCB fill:#f96
+    style FAB fill:#6f6
+```
+
 <v-click>
 
-<div class="mt-4 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-center text-sm">
+<div class="mt-4 p-3 bg-blue-500 bg-opacity-20 rounded-lg text-center">
 
-**Évaluation** : Laboratoires 1-2 (15% - Semaine 3) / Projet mi-session (30% - Semaine 7)
+| Problème | Solution | Semaine |
+|----------|----------|:-------:|
+| Prototype fragile | Conception PCB | 5-7 |
+| Fabrication | Envoi chez fabricant | 7 |
+| Assemblage | Soudure du PCB | 10 |
 
 </div>
 
@@ -178,13 +201,13 @@ layout: section
 ---
 
 # Partie 1
-## Communication I2C et accéléromètre
+## Introduction à la conception PCB
 
 ---
 
-# Le protocole I2C
+# Qu'est-ce qu'un PCB?
 
-### Inter-Integrated Circuit (I²C)
+### Printed Circuit Board (Circuit imprimé)
 
 <div class="grid grid-cols-2 gap-6">
 
@@ -192,11 +215,11 @@ layout: section
 
 <v-clicks>
 
-- Bus **série** à 2 fils
-- **SDA** : données (Serial Data)
-- **SCL** : horloge (Serial Clock)
-- Un **maître** (ESP32), plusieurs **esclaves**
-- Chaque périphérique a une **adresse** unique
+- Support **isolant** (FR4, fibre de verre)
+- **Pistes** de cuivre pour les connexions
+- **Pastilles** pour souder les composants
+- **Vias** pour connecter les couches
+- **Sérigraphie** pour les indications
 
 </v-clicks>
 
@@ -206,30 +229,7 @@ layout: section
 
 <v-click>
 
-### Schéma de connexion
-
-```
-         VCC (3.3V)
-          │   │
-         [R] [R]  ← Pull-up (4.7kΩ)
-          │   │
-    SDA ──┴───┼─────┬─────┐
-              │     │     │
-    SCL ──────┴─────┼─────┼──
-                    │     │
-                 [Acc]  [Autre]
-                  0x68   0x3C
-```
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-xs">
-
-Les résistances **pull-up** maintiennent les lignes à l'état haut.
-
-</div>
+<img src="https://www.pcbasic.com/Uploads/files/20231227/86f3edb7a6cb8e1db81db66b037cc5ac.jpg" class="rounded-lg shadow-lg" style="max-height: 300px; width: 100%; object-fit: contain;" />
 
 </v-click>
 
@@ -239,332 +239,20 @@ Les résistances **pull-up** maintiennent les lignes à l'état haut.
 
 ---
 
-# Fonctionnement du protocole I2C
+# Pourquoi concevoir un PCB?
 
-### Séquence de communication
-
-<v-click>
-
-```mermaid {scale: 0.55}
-sequenceDiagram
-    participant M as ESP32 (Maître)
-    participant A as Accéléromètre (0x68)
-
-    M->>A: START + Adresse (0x68) + Write
-    A->>M: ACK
-    M->>A: Registre à lire (0x3B)
-    A->>M: ACK
-    M->>A: REPEATED START + Adresse + Read
-    A->>M: ACK
-    A->>M: Donnée (accélération X high)
-    M->>A: ACK
-    A->>M: Donnée (accélération X low)
-    M->>A: NACK + STOP
-```
-
-</v-click>
-
-<v-click>
-
-<div class="grid grid-cols-2 gap-4 mt-2">
-
-<div class="p-2 bg-gray-100 rounded text-sm">
-
-**ACK** (Acknowledge) : Le récepteur confirme la réception
-
-</div>
-
-<div class="p-2 bg-gray-100 rounded text-sm">
-
-**NACK** : Fin de lecture, pas d'autres données attendues
-
-</div>
-
-</div>
-
-</v-click>
-
----
-
-# Vitesses I2C
-
-### Modes de fonctionnement
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-| Mode | Vitesse | Usage |
-|------|---------|-------|
-| Standard | 100 kHz | Capteurs simples |
-| Fast | 400 kHz | **Notre choix** |
-| Fast Plus | 1 MHz | Haute performance |
-| High Speed | 3.4 MHz | Applications spéciales |
-
-<v-click>
-
-<div class="mt-2 p-2 bg-green-500 bg-opacity-20 rounded-lg text-sm">
-
-Le mode **Fast (400 kHz)** offre un bon équilibre entre vitesse et compatibilité.
-
-</div>
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Avantages I2C
-
-- Seulement **2 fils** (+ GND)
-- **Plusieurs** périphériques sur le même bus
-- Communication **bidirectionnelle**
-- Protocole **standardisé**
-- Bien supporté par Arduino
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# L'accéléromètre
-
-### Mesure de l'accélération sur 3 axes
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-<v-clicks>
-
-- Mesure l'accélération **X, Y, Z**
-- Détecte aussi la **gravité** (9.81 m/s²)
-- Plage typique : ±2g à ±16g
-- Résolution : 16 bits par axe
-- Utilisations : orientation, mouvement, chocs
-
-</v-clicks>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Les 3 axes
-
-```
-        Y (+)
-         │
-         │
-         │
-    ─────┼───── X (+)
-        /│
-       / │
-      /  │
-   Z (+)
-```
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-sm">
-
-Au repos à plat : X≈0, Y≈0, **Z≈1g** (gravité)
-
-</div>
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Registres de l'accéléromètre
-
-### Organisation de la mémoire interne
-
-<v-click>
-
-| Registre | Adresse | Fonction |
-|----------|---------|----------|
-| WHO_AM_I | 0x75 | Identification (vérifie la connexion) |
-| PWR_MGMT_1 | 0x6B | Gestion de l'alimentation |
-| ACCEL_XOUT_H | 0x3B | Accélération X (poids fort) |
-| ACCEL_XOUT_L | 0x3C | Accélération X (poids faible) |
-| ACCEL_YOUT_H | 0x3D | Accélération Y (poids fort) |
-| ACCEL_YOUT_L | 0x3E | Accélération Y (poids faible) |
-| ACCEL_ZOUT_H | 0x3F | Accélération Z (poids fort) |
-| ACCEL_ZOUT_L | 0x40 | Accélération Z (poids faible) |
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-sm">
-
-Chaque valeur d'accélération est sur **16 bits** (2 registres de 8 bits).
-
-</div>
-
-</v-click>
-
----
-
-# Code Arduino - Initialisation I2C
-
-### Configuration de l'accéléromètre
-
-```cpp {all|1-2|4-5|7-11|13-17}
-#include <Wire.h>
-#define ACCEL_ADDR 0x68  // Adresse I2C de l'accéléromètre
-
-// Broches I2C du LilyGO A7670G
-#define I2C_SDA 21
-#define I2C_SCL 22
-
-void setup() {
-  Serial.begin(115200);
-
-  // Initialiser I2C avec les broches spécifiques
-  Wire.begin(I2C_SDA, I2C_SCL);
-  Wire.setClock(400000);  // Mode Fast 400 kHz
-
-  // Réveiller l'accéléromètre (sortir du mode sleep)
-  Wire.beginTransmission(ACCEL_ADDR);
-  Wire.write(0x6B);  // Registre PWR_MGMT_1
-  Wire.write(0x00);  // Valeur 0 = réveil
-  Wire.endTransmission();
-
-  Serial.println("Accéléromètre initialisé!");
-}
-```
-
----
-
-# Code Arduino - Lecture des données
-
-### Récupérer les valeurs d'accélération
-
-```cpp {all|1-5|7-13|15-20}
-int16_t readAccelAxis(uint8_t regH) {
-  Wire.beginTransmission(ACCEL_ADDR);
-  Wire.write(regH);
-  Wire.endTransmission(false);  // Repeated start
-
-  Wire.requestFrom(ACCEL_ADDR, 2);
-  int16_t value = (Wire.read() << 8) | Wire.read();
-  return value;
-}
-
-void loop() {
-  // Lire les 3 axes
-  int16_t ax = readAccelAxis(0x3B);  // X
-  int16_t ay = readAccelAxis(0x3D);  // Y
-  int16_t az = readAccelAxis(0x3F);  // Z
-
-  // Convertir en g (pour ±2g: diviser par 16384)
-  float gx = ax / 16384.0;
-  float gy = ay / 16384.0;
-  float gz = az / 16384.0;
-
-  Serial.printf("X: %.2fg  Y: %.2fg  Z: %.2fg\n", gx, gy, gz);
-  delay(100);
-}
-```
-
----
-
-# Bibliothèque Arduino simplifiée
-
-### Alternative avec bibliothèque existante
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-```cpp
-#include <Wire.h>
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
-
-Adafruit_MPU6050 mpu;
-
-void setup() {
-  Serial.begin(115200);
-  Wire.begin(21, 22);
-
-  if (!mpu.begin()) {
-    Serial.println("Erreur MPU6050!");
-    while (1) delay(10);
-  }
-
-  mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
-  Serial.println("MPU6050 prêt!");
-}
-```
-
-</div>
-
-<div>
-
-```cpp
-void loop() {
-  sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
-
-  Serial.print("Accel X: ");
-  Serial.print(a.acceleration.x);
-  Serial.print(" m/s²  Y: ");
-  Serial.print(a.acceleration.y);
-  Serial.print(" m/s²  Z: ");
-  Serial.print(a.acceleration.z);
-  Serial.println(" m/s²");
-
-  delay(100);
-}
-```
-
-<v-click>
-
-<div class="mt-2 p-2 bg-green-500 bg-opacity-20 rounded-lg text-xs">
-
-La bibliothèque gère les détails du protocole I2C pour vous.
-
-</div>
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Applications de l'accéléromètre
-
-### Idées pour votre projet
-
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-3 gap-4">
 
 <div class="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
 
-### Détection d'orientation
+### Fiabilité
 
 <v-click>
 
-- Détecter si l'appareil est à plat, incliné, renversé
-- Afficher l'état sur l'interface RPi
-- Exemple : alarme si renversé
+- Connexions **permanentes**
+- Pas de fils qui se débranchent
+- Résiste aux vibrations
+- Durée de vie longue
 
 </v-click>
 
@@ -572,13 +260,14 @@ La bibliothèque gère les détails du protocole I2C pour vous.
 
 <div class="p-3 bg-green-500 bg-opacity-20 rounded-lg">
 
-### Détection de mouvement
+### Reproductibilité
 
 <v-click>
 
-- Secouer pour déclencher une action
-- Jeu de type "dé virtuel"
-- Compteur de pas simplifié
+- **Identique** à chaque fabrication
+- Fichiers Gerber standards
+- Production en **série**
+- Qualité constante
 
 </v-click>
 
@@ -586,58 +275,103 @@ La bibliothèque gère les détails du protocole I2C pour vous.
 
 <div class="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
 
-### Contrôle par inclinaison
+### Professionnalisme
 
 <v-click>
 
-- Manette de jeu (incliner = direction)
-- Niveau à bulle numérique
-- Contrôle de curseur sur écran
-
-</v-click>
-
-</div>
-
-<div class="p-3 bg-orange-500 bg-opacity-20 rounded-lg">
-
-### Mesure de chocs
-
-<v-click>
-
-- Détecter les chutes ou impacts
-- Logger les événements
-- Alertes en temps réel via MQTT
+- Aspect **fini**
+- Compact et organisé
+- Facilite le **dépannage**
+- Documentation intégrée
 
 </v-click>
 
 </div>
 
 </div>
+
+---
+
+# Le workflow de conception PCB
+
+```mermaid {scale: 0.5}
+graph LR
+    subgraph "Conception (KiCad)"
+        A[Schéma] -->|ERC| B[Vérif.]
+        B --> C[Empreintes]
+        C --> D[Placement]
+        D --> E[Routage]
+    end
+
+    subgraph "Production"
+        E -->|DRC| F[Vérif.]
+        F --> G[Gerbers]
+        G --> H[Fabricant]
+        H --> I[PCB]
+    end
+
+    style A fill:#69f
+    style G fill:#f96
+    style I fill:#6f6
+```
+
+<v-click>
+
+<div class="grid grid-cols-2 gap-4 mt-4">
+
+<div>
+
+### Étapes logicielles (KiCad)
+1. Saisie du schéma
+2. Vérification ERC
+3. Assignation des empreintes
+4. Placement des composants
+5. Routage des pistes
+6. Vérification DRC
+7. Génération des Gerbers
+
+</div>
+
+<div>
+
+### Étapes physiques
+1. Envoi au fabricant
+2. Fabrication (~1-2 semaines)
+3. Réception du PCB
+4. Soudure des composants
+5. Tests électriques
+
+</div>
+
+</div>
+
+</v-click>
 
 ---
 layout: section
 ---
 
 # Partie 2
-## Conversion Analogique-Numérique (ADC)
+## KiCad - L'outil de conception
 
 ---
 
-# Qu'est-ce qu'un ADC?
-
-### Analog-to-Digital Converter
+# Pourquoi KiCad?
 
 <div class="grid grid-cols-2 gap-6">
 
 <div>
 
+### Avantages
+
 <v-clicks>
 
-- Convertit une **tension analogique** en **valeur numérique**
-- Entrée : 0V à Vref (ex: 3.3V)
-- Sortie : nombre entier (0 à 2^n - 1)
-- **Résolution** : nombre de bits (12 bits sur ESP32)
-- **Plage** : 0 à 4095 (2^12 - 1)
+- **Gratuit** et open source
+- **Professionnel** (utilisé en industrie)
+- **Multi-plateforme** (Win/Mac/Linux)
+- **Communauté** active
+- Pas de limite de taille de PCB
+- Export **Gerber** standard
 
 </v-clicks>
 
@@ -647,461 +381,15 @@ layout: section
 
 <v-click>
 
-### Formule de conversion
-
-$$
-Valeur_{ADC} = \frac{V_{entrée}}{V_{ref}} \times (2^{bits} - 1)
-$$
-
-**Exemple** : Pour 1.65V avec Vref=3.3V et 12 bits
-
-$$
-\frac{1.65V}{3.3V} \times 4095 = 2047
-$$
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# ADC sur l'ESP32
-
-### Caractéristiques et limitations
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-### Spécifications
-
-<v-click>
-
-| Caractéristique | Valeur |
-|-----------------|--------|
-| Résolution | 12 bits (0-4095) |
-| Canaux ADC1 | GPIO 32-39 |
-| Canaux ADC2 | GPIO 0, 2, 4, 12-15, 25-27 |
-| Tension max | 3.3V |
-| Fréquence max | ~200 ksps |
-
-</v-click>
-
-</div>
-
-<div>
-
-### Attention!
-
-<v-click>
-
-<div class="p-2 bg-red-500 bg-opacity-20 rounded-lg text-sm">
-
-**ADC2 ne fonctionne PAS quand le WiFi est actif!**
-
-Utilisez uniquement **ADC1** (GPIO 32-39) pour vos potentiomètres.
-
-</div>
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-sm">
-
-L'ADC de l'ESP32 n'est **pas linéaire** aux extrêmes (0-0.1V et 3.2-3.3V).
-
-</div>
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Le potentiomètre
-
-### Diviseur de tension variable
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-<v-click>
-
-### Schéma interne
-
-```
-    VCC (3.3V)
-      │
-      │
-     [│]
-     [│]  ← Résistance variable
-     [│]      (10kΩ typique)
-      ├────── Sortie (Wiper)
-     [│]
-     [│]
-      │
-     GND
-```
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Fonctionnement
-
-- 3 broches : VCC, GND, Signal
-- La broche centrale (wiper) donne une tension proportionnelle à la rotation
-- Rotation 0% → 0V
-- Rotation 50% → 1.65V
-- Rotation 100% → 3.3V
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-sm">
-
-Parfait pour des contrôles de type volume, vitesse, seuil, etc.
-
-</div>
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Code Arduino - Lecture de potentiomètre
-
-### Lecture simple et conversion
-
-```cpp {all|1-3|5-9|11-17}
-// Broches ADC1 disponibles sur LilyGO
-#define POT1_PIN 34  // ADC1_CH6
-#define POT2_PIN 35  // ADC1_CH7
-
-void setup() {
-  Serial.begin(115200);
-  // Pas besoin de pinMode pour les entrées ADC
-  analogReadResolution(12);  // 12 bits (0-4095)
-}
-
-void loop() {
-  // Lecture brute
-  int valeur1 = analogRead(POT1_PIN);
-  int valeur2 = analogRead(POT2_PIN);
-
-  // Conversion en pourcentage
-  float pourcent1 = (valeur1 / 4095.0) * 100.0;
-  float pourcent2 = (valeur2 / 4095.0) * 100.0;
-
-  Serial.printf("POT1: %d (%.1f%%)  POT2: %d (%.1f%%)\n",
-                valeur1, pourcent1, valeur2, pourcent2);
-  delay(100);
-}
-```
-
----
-
-# Filtrage des valeurs ADC
-
-### Problème : bruit et instabilité
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-<v-click>
-
-### Le problème
-
-- Les lectures ADC **fluctuent**
-- Bruit électrique
-- Variations de contact
-- Affichage instable
-
-</v-click>
-
-<v-click>
-
-### Solutions
-
-1. **Moyenne mobile** : moyenne des N dernières lectures
-2. **Filtre passe-bas** : lissage exponentiel
-3. **Zone morte** : ignorer les petits changements
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Moyenne mobile simple
-
-```cpp
-#define SAMPLES 10
-int readings[SAMPLES];
-int readIndex = 0;
-long total = 0;
-
-int readSmoothed(int pin) {
-  total -= readings[readIndex];
-  readings[readIndex] = analogRead(pin);
-  total += readings[readIndex];
-  readIndex = (readIndex + 1) % SAMPLES;
-
-  return total / SAMPLES;
-}
-```
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Filtre passe-bas (EMA)
-
-### Exponential Moving Average
-
-<div class="grid grid-cols-2 gap-6">
-
-<div>
-
-<v-click>
-
-### Formule
-
-$$
-y_n = \alpha \cdot x_n + (1 - \alpha) \cdot y_{n-1}
-$$
-
-- $x_n$ : nouvelle lecture
-- $y_{n-1}$ : valeur filtrée précédente
-- $\alpha$ : facteur de lissage (0.1 à 0.3)
-
-</v-click>
-
-<v-click>
-
-### Avantages
-
-- Utilise peu de mémoire
-- Réponse continue
-- Ajustable facilement
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Code
-
-```cpp
-float alpha = 0.2;  // Ajuster selon besoin
-float filtered = 0;
-
-int readFiltered(int pin) {
-  int raw = analogRead(pin);
-  filtered = alpha * raw +
-             (1.0 - alpha) * filtered;
-  return (int)filtered;
-}
-```
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-xs">
-
-**Alpha bas (0.1)** = plus lisse, plus lent
-**Alpha haut (0.3)** = plus réactif, plus de bruit
-
-</div>
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Applications des potentiomètres
-
-### Idées pour votre projet
-
-<div class="grid grid-cols-2 gap-4">
-
-<div class="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
-
-### Contrôle d'intensité
-
-<v-click>
-
-- Luminosité des LEDs (PWM)
-- Volume d'un buzzer
-- Vitesse d'animation
-
-</v-click>
-
-</div>
-
-<div class="p-3 bg-green-500 bg-opacity-20 rounded-lg">
-
-### Seuils ajustables
-
-<v-click>
-
-- Seuil de détection de mouvement
-- Niveau d'alarme
-- Temps de délai
-
-</v-click>
-
-</div>
-
-<div class="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
-
-### Interface de jeu
-
-<v-click>
-
-- Contrôle de position (paddle)
-- Sélection dans un menu
-- Réglage de paramètres
-
-</v-click>
-
-</div>
-
-<div class="p-3 bg-orange-500 bg-opacity-20 rounded-lg">
-
-### Dashboard IoT
-
-<v-click>
-
-- Consigne de température
-- Setpoint de régulation
-- Niveau de zoom/échelle
-
-</v-click>
-
-</div>
-
-</div>
-
----
-layout: section
----
-
-# Partie 3
-## Architecture applicative
-
----
-
-# Vue d'ensemble du système
-
-### Flux de données complet
-
-<v-click>
-
-```mermaid {scale: 0.5}
-graph LR
-    subgraph "Shield LilyGO"
-        BTN[Boutons] --> LILY[LilyGO<br/>ESP32]
-        POT[Potentiomètres] --> LILY
-        ACC[Accéléromètre] -->|I2C| LILY
-        LILY --> LED[LEDs]
-    end
-
-    subgraph "Communication"
-        LILY -->|MQTT/WSS| CF[Cloudflare]
-        CF --> MOSQ[Mosquitto]
-    end
-
-    subgraph "Raspberry Pi"
-        MOSQ --> PY[Interface<br/>Python]
-        PY --> SCREEN[Écran<br/>tactile]
-    end
-
-    style LILY fill:#f96
-    style MOSQ fill:#f9f
-    style PY fill:#6f6
-```
-
-</v-click>
-
-<v-click>
-
-<div class="mt-2 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-center text-sm">
-
-**Bidirectionnel** : Les commandes peuvent aller dans les deux sens!
-
-</div>
-
-</v-click>
-
----
-
-# Structure des topics MQTT
-
-### Organisation hiérarchique
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-<v-click>
-
-### Convention de nommage
-
-```
-iot/[etudiant]/[direction]/[composant]
-
-Exemples:
-iot/alice/out/btn1
-iot/alice/out/btn2
-iot/alice/out/pot1
-iot/alice/out/accel
-iot/alice/in/led1
-iot/alice/in/led2
-```
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Direction des données
-
-| Direction | Signification |
-|-----------|---------------|
-| `out` | Du LilyGO **vers** le RPi |
-| `in` | Du RPi **vers** le LilyGO |
+### Alternatives
+
+| Logiciel | Prix | Usage |
+|----------|------|-------|
+| **KiCad** | Gratuit | Pro/Hobby |
+| Eagle | Payant | Industrie |
+| Altium | $$$ | Industrie |
+| EasyEDA | Gratuit | Hobby |
+| Fusion 360 | Gratuit* | Hobby |
 
 </v-click>
 
@@ -1109,7 +397,7 @@ iot/alice/in/led2
 
 <div class="mt-2 p-2 bg-green-500 bg-opacity-20 rounded-lg text-sm">
 
-Le LilyGO **publie** sur `out/` et **s'abonne** à `in/`
+KiCad est le choix idéal pour apprendre sans limites!
 
 </div>
 
@@ -1121,38 +409,31 @@ Le LilyGO **publie** sur `out/` et **s'abonne** à `in/`
 
 ---
 
-# Format des messages MQTT
-
-### JSON pour les données structurées
+# Les modules de KiCad
 
 <div class="grid grid-cols-2 gap-4">
 
 <div>
 
-### Capteurs → RPi
+### Éditeur de schéma
 
 <v-click>
 
-```json
-// Topic: iot/alice/out/btn1
-{
-  "state": 1,
-  "timestamp": 1704067200
-}
+- Saisie du circuit électrique
+- Symboles des composants
+- Connexions logiques
+- Vérification ERC
 
-// Topic: iot/alice/out/pot1
-{
-  "value": 2048,
-  "percent": 50.0
-}
+</v-click>
 
-// Topic: iot/alice/out/accel
-{
-  "x": 0.12,
-  "y": -0.05,
-  "z": 0.98
-}
-```
+### Éditeur de PCB
+
+<v-click>
+
+- Placement des composants
+- Routage des pistes
+- Plans de masse
+- Vérification DRC
 
 </v-click>
 
@@ -1160,28 +441,30 @@ Le LilyGO **publie** sur `out/` et **s'abonne** à `in/`
 
 <div>
 
-### RPi → Actionneurs
+### Éditeur de symboles
 
 <v-click>
 
-```json
-// Topic: iot/alice/in/led1
-{
-  "state": 1
-}
+- Créer ses propres symboles
+- Bibliothèques personnalisées
 
-// Topic: iot/alice/in/led1
-{
-  "brightness": 128
-}
+</v-click>
 
-// Topic: iot/alice/in/all
-{
-  "led1": 1,
-  "led2": 0,
-  "led3": 1
-}
-```
+### Éditeur d'empreintes
+
+<v-click>
+
+- Créer ses propres footprints
+- Dimensions physiques
+
+</v-click>
+
+### Visualiseur 3D
+
+<v-click>
+
+- Aperçu réaliste du PCB
+- Vérification avant fabrication
 
 </v-click>
 
@@ -1191,111 +474,123 @@ Le LilyGO **publie** sur `out/` et **s'abonne** à `in/`
 
 ---
 
-# Code Arduino - Publication MQTT
+# Schéma vs PCB
 
-### Envoyer les données des capteurs
+<div class="grid grid-cols-2 gap-6">
 
-```cpp {all|1-7|9-16|18-25}
-// Fonction pour publier un bouton
-void publishButton(int btnNum, int state) {
-  char topic[50];
-  sprintf(topic, "iot/%s/out/btn%d", STUDENT_ID, btnNum);
+<div>
 
-  char payload[50];
-  sprintf(payload, "{\"state\":%d}", state);
+### Schéma (logique)
 
-  client.publish(topic, payload);
-}
+<v-click>
 
-// Fonction pour publier l'accéléromètre
-void publishAccel(float x, float y, float z) {
-  char topic[50];
-  sprintf(topic, "iot/%s/out/accel", STUDENT_ID);
+Représentation **logique** du circuit électrique
 
-  char payload[100];
-  sprintf(payload, "{\"x\":%.2f,\"y\":%.2f,\"z\":%.2f}", x, y, z);
+- Connexions **électriques**
+- Pas de dimensions physiques
+- Symboles normalisés
 
-  client.publish(topic, payload);
-}
+</v-click>
 
-// Fonction pour publier un potentiomètre
-void publishPot(int potNum, int value) {
-  char topic[50];
-  sprintf(topic, "iot/%s/out/pot%d", STUDENT_ID, potNum);
+</div>
 
-  char payload[50];
-  sprintf(payload, "{\"value\":%d,\"percent\":%.1f}",
-          value, (value / 4095.0) * 100.0);
+<div>
 
-  client.publish(topic, payload);
-}
-```
+### PCB (physique)
 
----
+<v-click>
 
-# Code Arduino - Réception MQTT
+Représentation **physique** des composants
 
-### Traiter les commandes pour les LEDs
+- Dimensions **réelles**
+- Emplacement des pistes
+- Couches de cuivre
 
-```cpp {all|1-4|6-15|17-24}
-// S'abonner aux topics de commande
-void setupSubscriptions() {
-  char topic[50];
-  sprintf(topic, "iot/%s/in/#", STUDENT_ID);  // Wildcard #
-  client.subscribe(topic);
-}
+</v-click>
 
-// Callback de réception
-void callback(char* topic, byte* payload, unsigned int length) {
-  // Parser le JSON reçu
-  StaticJsonDocument<200> doc;
-  deserializeJson(doc, payload, length);
+</div>
 
-  // Extraire le composant du topic (ex: "led1")
-  String topicStr = String(topic);
-  int lastSlash = topicStr.lastIndexOf('/');
-  String component = topicStr.substring(lastSlash + 1);
+</div>
 
-  // Traiter selon le composant
-  if (component == "led1") {
-    int state = doc["state"];
-    digitalWrite(LED1_PIN, state);
-  } else if (component == "led2") {
-    int state = doc["state"];
-    digitalWrite(LED2_PIN, state);
-  }
-}
-```
+<v-click>
+
+<img src="https://preview.redd.it/why-a-circuit-diagram-looks-different-than-pcb-layout-v0-8ltf8iwb8sy91.jpg?width=1280&format=pjpg&auto=webp&s=4baf74f8aafc5c6f22ddce82d29186237a1ef0c7" class="rounded-lg shadow-lg mx-auto mt-2" style="max-height: 260px; object-fit: contain;" />
+
+</v-click>
 
 ---
 
-# Interface Python - Structure
+# Symboles et empreintes
 
-### Architecture de l'application RPi
+<div class="grid grid-cols-2 gap-6">
 
-<div class="grid grid-cols-2 gap-4">
+<div>
+
+### Symbole (schéma)
+
+<v-click>
+
+Représentation **graphique** dans le schéma.
+
+```
+    ┌─────┐
+  ──┤1   8├──
+  ──┤2   7├──
+  ──┤3   6├──
+  ──┤4   5├──
+    └─────┘
+     NE555
+```
+
+- Broches numérotées
+- Pas de dimensions physiques
+
+</v-click>
+
+</div>
+
+<div>
+
+### Empreinte (PCB)
+
+<v-click>
+
+<img src="https://kicad-info.s3.dualstack.us-west-2.amazonaws.com/original/2X/2/2cc3e9fec3aebf8bb5505a25dc1177e62cac6b6a.png" class="rounded-lg" style="max-height: 220px; width: 100%; object-fit: contain;" />
+
+</v-click>
+
+</div>
+
+</div>
+
+<v-click>
+
+<div class="mt-3 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-center text-sm">
+
+Le **symbole** décrit la logique électrique — l'**empreinte** décrit la forme physique sur le PCB
+
+</div>
+
+</v-click>
+
+---
+
+# Un symbole → plusieurs empreintes
+
+### Exemple : Résistance 10 kΩ
+
+<div class="grid grid-cols-2 gap-6">
 
 <div>
 
 <v-click>
 
-```mermaid {scale: 0.5}
-graph TB
-    subgraph "Application Python"
-        MAIN[main.py] --> UI[Interface<br/>GUI Terminal]
-        MAIN --> MQTT[Client<br/>MQTT]
-
-        MQTT -->|Subscribe| RECV[Réception<br/>données]
-        MQTT -->|Publish| SEND[Envoi<br/>commandes]
-
-        RECV --> UI
-        UI --> SEND
-    end
-
-    style MAIN fill:#6f6
-    style UI fill:#69f
-    style MQTT fill:#f9f
-```
+| Empreinte | Type | Taille |
+|-----------|------|--------|
+| R_Axial_DIN0207 | **THT** | 6.3 × 2.5 mm |
+| R_0805_2012Metric | SMD | 2.0 × 1.25 mm |
+| R_0603_1608Metric | SMD | 1.6 × 0.8 mm |
+| R_0402_1005Metric | SMD | 1.0 × 0.5 mm |
 
 </v-click>
 
@@ -1305,19 +600,165 @@ graph TB
 
 <v-click>
 
-### Modules principaux
+### Comment choisir?
 
-```python
-# Structure de fichiers
-project/
-├── main.py          # Point d'entrée
-├── mqtt_client.py   # Gestion MQTT
-├── ui/
-│   ├── __init__.py
-│   └── terminal.py  # Interface rich
-├── config.py        # Configuration
-└── requirements.txt
-```
+- **THT** → prototype, soudure manuelle facile
+- **0805** → SMD, soudure à la main possible
+- **0603** → SMD compact, fer fin requis
+- **0402** → SMD très petit, four recommandé
+
+</v-click>
+
+</div>
+
+</div>
+
+<v-click>
+
+<div class="mt-3 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-center text-sm">
+
+Même valeur électrique (10 kΩ), formes physiques très différentes — **pour ce cours : THT (traversant)**
+
+</div>
+
+</v-click>
+
+---
+
+# Pourquoi créer un symbole ou une empreinte?
+
+### Les bibliothèques ne couvrent pas tout
+
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+
+<v-click>
+
+### Cas typiques
+
+- **Module sur PCB** (breakout board) comme le MPU6050 sur shield
+- Connecteurs **spécifiques** ou non standards
+- Composants **récents** pas encore dans les librairies
+- Boîtiers avec un **brochage particulier**
+
+</v-click>
+
+<v-click>
+
+### Exemple : MPU6050 breakout
+
+Le capteur **MPU6050** existe dans KiCad comme **puce seule** (QFN-24), mais pas comme **module breakout** avec ses broches VCC, GND, SCL, SDA, etc.
+
+</v-click>
+
+</div>
+
+<div>
+
+<v-click>
+
+### Il faut créer...
+
+| Élément | Raison |
+|---------|--------|
+| **Symbole** | Broches du module (pas de la puce) |
+| **Empreinte** | Dimensions physiques du breakout |
+
+</v-click>
+
+<v-click>
+
+### Où les créer?
+
+1. **Éditeur de symboles** → nouveau symbole avec les broches du module
+2. **Éditeur d'empreintes** → pads selon l'espacement réel des headers
+3. Stocker dans une **bibliothèque locale** au projet
+
+</v-click>
+
+</div>
+
+</div>
+
+<v-click>
+
+<div class="mt-3 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-center text-sm">
+
+Pour votre shield, le **MPU6050 breakout** n'a ni symbole ni empreinte dans les librairies standard — il faudra les créer!
+
+</div>
+
+</v-click>
+
+---
+layout: section
+---
+
+# Partie 3
+## Saisie du schéma
+
+---
+
+# Créer un nouveau projet
+
+### Étapes dans KiCad
+
+<v-clicks>
+
+1. **File → New Project**
+2. Choisir un dossier dédié
+3. Donner un nom significatif (ex: `shield-lilygo`)
+4. KiCad crée automatiquement :
+   - `projet.kicad_pro` (fichier projet)
+   - `projet.kicad_sch` (schéma)
+   - `projet.kicad_pcb` (PCB)
+
+</v-clicks>
+
+<v-click>
+
+<div class="mt-4 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-sm">
+
+**Bonne pratique** : Un dossier = Un projet. Inclure les datasheets et la documentation.
+
+</div>
+
+</v-click>
+
+---
+
+# Placer des composants
+
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+
+### Dans l'éditeur de schéma
+
+<v-clicks>
+
+1. **Raccourci A** → Ajouter un symbole
+2. Rechercher dans la bibliothèque (ex: "LED")
+3. Cliquer pour placer
+4. **R** pour tourner, **M** pour déplacer
+
+</v-clicks>
+
+</div>
+
+<div>
+
+### Bibliothèques utiles
+
+<v-click>
+
+| Bibliothèque | Contenu |
+|--------------|---------|
+| Device | Résistances, condensateurs, LEDs |
+| Connector | Connecteurs, headers |
+| MCU_Module | Arduino, ESP32, RPi |
+| Switch | Boutons, interrupteurs |
 
 </v-click>
 
@@ -1327,168 +768,212 @@ project/
 
 ---
 
-# Interface Python - Code MQTT
+# Connexions dans le schéma
 
-### Client MQTT avec paho-mqtt
+<div class="grid grid-cols-2 gap-6">
 
-```python {all|1-8|10-18|20-28}
-import paho.mqtt.client as mqtt
-import json
+<div>
 
-# Configuration
-BROKER = "votre-broker.example.com"
-PORT = 8883
-STUDENT_ID = "alice"
+### Types de connexions
 
-# Callback de connexion
-def on_connect(client, userdata, flags, rc):
-    print(f"Connecté avec code: {rc}")
-    # S'abonner aux données du LilyGO
-    client.subscribe(f"iot/{STUDENT_ID}/out/#")
+<v-clicks>
 
-# Callback de réception
-def on_message(client, userdata, msg):
-    topic = msg.topic
-    payload = json.loads(msg.payload.decode())
-    print(f"Reçu sur {topic}: {payload}")
+- **Fil (W)** : Connexion directe
+- **Label** : Connexion par nom
+- **Power symbol** : VCC, GND
+- **No Connect (X)** : Broche non utilisée
 
-    # Traiter selon le type de donnée
-    if "accel" in topic:
-        update_accel_display(payload)
-    elif "btn" in topic:
-        handle_button_press(payload)
-    elif "pot" in topic:
-        update_pot_display(payload)
-```
+</v-clicks>
+
+</div>
+
+<div>
+
+<v-click>
+
+### Bonnes pratiques
+
+- Schéma **lisible** (gauche→droite)
+- **Labels** pour les signaux importants
+- **Annotations** pour clarifier
+- Pas de fils qui se croisent inutilement
+
+</v-click>
+
+</div>
+
+</div>
+
+<v-click>
+
+<div class="mt-4 p-2 bg-green-500 bg-opacity-20 rounded-lg text-sm">
+
+**Astuce** : Utilisez des labels pour les connexions longues plutôt que des fils qui traversent tout le schéma.
+
+</div>
+
+</v-click>
 
 ---
 
-# Interface GUI Terminal
+# ERC - Electrical Rules Check
 
-### Utilisation de la bibliothèque Rich
+### Vérification des erreurs électriques
 
-<div class="grid grid-cols-2 gap-4">
+<v-clicks>
 
-<div>
+- **Inspect → Electrical Rules Checker**
+- Détecte les problèmes **avant** le routage
 
-```python
-from rich.console import Console
-from rich.table import Table
-from rich.live import Live
-from rich.panel import Panel
-
-console = Console()
-
-def create_dashboard():
-    table = Table(title="Shield LilyGO")
-
-    table.add_column("Composant")
-    table.add_column("Valeur")
-    table.add_column("État")
-
-    table.add_row("Bouton 1",
-                  str(btn1_state),
-                  "[green]ON" if btn1_state else "[red]OFF")
-    table.add_row("Pot 1",
-                  f"{pot1_value}",
-                  f"{pot1_percent:.1f}%")
-    table.add_row("Accel X",
-                  f"{accel_x:.2f}g",
-                  get_bar(accel_x))
-
-    return table
-```
-
-</div>
-
-<div>
+</v-clicks>
 
 <v-click>
 
-### Affichage en temps réel
+### Erreurs courantes
 
-```python
-from rich.live import Live
-
-def run_dashboard():
-    with Live(create_dashboard(),
-              refresh_per_second=10) as live:
-        while True:
-            # Mise à jour automatique
-            live.update(create_dashboard())
-            time.sleep(0.1)
-```
+| Erreur | Cause | Solution |
+|--------|-------|----------|
+| Pin not connected | Broche flottante | Connecter ou marquer NC |
+| Power pin not driven | Pas d'alimentation | Ajouter symbole power |
+| Conflicting outputs | 2 sorties connectées | Vérifier le circuit |
 
 </v-click>
 
 <v-click>
 
-<div class="mt-2 p-2 bg-green-500 bg-opacity-20 rounded-lg text-xs">
+<div class="mt-2 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-sm">
 
-Rich permet des interfaces textuelles riches dans le terminal, parfait pour l'écran tactile du RPi.
+**Important** : Corriger **toutes** les erreurs ERC avant de passer au PCB!
 
 </div>
 
 </v-click>
-
-</div>
-
-</div>
 
 ---
 layout: section
 ---
 
 # Partie 4
-## Documentation GitHub
+## Assignation des empreintes
 
 ---
 
-# Pourquoi documenter?
+# Associer symboles et empreintes
 
-### La documentation fait partie du projet
+### Chaque composant a besoin d'une empreinte
+
+<v-clicks>
+
+1. **Tools → Assign Footprints**
+2. Pour chaque composant :
+   - Sélectionner dans la liste
+   - Choisir l'empreinte appropriée
+   - Vérifier les dimensions
+
+</v-clicks>
+
+<v-click>
+
+### Exemple : Résistance
+
+| Type | Empreinte | Taille |
+|------|-----------|--------|
+| Traversante | R_Axial_DIN0207 | 6.3mm |
+| CMS 0805 | R_0805_2012Metric | 2.0×1.25mm |
+| CMS 0603 | R_0603_1608Metric | 1.6×0.8mm |
+
+</v-click>
+
+---
+
+# Choisir la bonne empreinte
+
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+
+### Composants traversants (THT)
+
+<v-click>
+
+- **Plus facile** à souder
+- Plus **gros**
+- Idéal pour **prototypes**
+- Résistance mécanique
+
+</v-click>
+
+</div>
+
+<div>
+
+### Composants CMS (SMD)
+
+<v-click>
+
+- Plus **compact**
+- **Production** industrielle
+- Requiert plus de **précision**
+- Soudure au four ou air chaud
+
+</v-click>
+
+</div>
+
+</div>
+
+<v-click>
+
+<div class="mt-4 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-center text-sm">
+
+Pour ce cours, on privilégie les composants **traversants** (plus faciles à souder manuellement)
+
+</div>
+
+</v-click>
+
+---
+layout: section
+---
+
+# Partie 5
+## Début du dessin du PCB
+
+---
+
+# Le projet de mi-session
+
+### Ce n'est pas juste un PCB!
 
 <div class="grid grid-cols-3 gap-3">
 
-<div class="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
+<div class="p-2 bg-blue-500 bg-opacity-20 rounded-lg text-sm">
 
-### Pour vous
+**Matériel**
 
-<v-click>
-
-- Retrouver votre logique plus tard
-- Comprendre vos propres décisions
-- Référence rapide
-
-</v-click>
+- Shield PCB pour LilyGO
+- Capteurs/actionneurs
+- Schéma + routage
 
 </div>
 
-<div class="p-3 bg-green-500 bg-opacity-20 rounded-lg">
+<div class="p-2 bg-green-500 bg-opacity-20 rounded-lg text-sm">
 
-### Pour les autres
+**Code**
 
-<v-click>
-
-- Collaborateurs peuvent contribuer
-- Utilisateurs peuvent utiliser
-- Évaluateurs peuvent évaluer!
-
-</v-click>
+- Firmware Arduino
+- Lecture capteurs
+- Communication MQTT
 
 </div>
 
-<div class="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
+<div class="p-2 bg-purple-500 bg-opacity-20 rounded-lg text-sm">
 
-### Pour votre carrière
+**Infrastructure**
 
-<v-click>
-
-- Portfolio professionnel
-- Démontre vos compétences
-- Habitude industrielle
-
-</v-click>
+- Broker Mosquitto
+- Interface Python
+- Cloudflare Tunnel
 
 </div>
 
@@ -1498,7 +983,7 @@ layout: section
 
 <div class="mt-4 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-center text-sm">
 
-**Un projet sans documentation est un projet incomplet.**
+**Cette semaine** : Commencer le schéma KiCad de votre shield!
 
 </div>
 
@@ -1506,403 +991,24 @@ layout: section
 
 ---
 
-# Structure d'un README.md efficace
+# Assignation par étudiant
 
-### Les sections essentielles
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-<v-click>
-
-```markdown
-# Nom du projet
-
-Brève description (1-2 phrases)
-
-## Table des matières
-- [Fonctionnalités](#fonctionnalités)
-- [Installation](#installation)
-- [Utilisation](#utilisation)
-- [Configuration](#configuration)
-- [Architecture](#architecture)
-- [API MQTT](#api-mqtt)
-- [Auteur](#auteur)
-
-## Fonctionnalités
-- Feature 1
-- Feature 2
-- Feature 3
-```
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-```markdown
-## Installation
-
-### Prérequis
-- Python 3.9+
-- Arduino CLI
-- Accès au broker MQTT
-
-### Étapes
-1. Cloner le dépôt
-2. Installer les dépendances
-3. Configurer les secrets
-
-## Utilisation
-
-### Démarrage rapide
-\`\`\`bash
-python main.py
-\`\`\`
-
-### Commandes disponibles
-- `start` : Démarre l'interface
-- `stop` : Arrête proprement
-```
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Syntaxe Markdown essentielle
-
-### Référence rapide
-
-<div class="grid grid-cols-2 gap-4 text-sm">
-
-<div>
-
-<v-click>
-
-### Titres et texte
-
-```markdown
-# Titre 1
-## Titre 2
-### Titre 3
-
-Texte normal
-**Gras**
-*Italique*
-`code inline`
-```
-
-</v-click>
-
-<v-click>
-
-### Listes
-
-```markdown
-- Item non ordonné
-- Autre item
-  - Sous-item
-
-1. Premier
-2. Deuxième
-3. Troisième
-```
-
-</v-click>
-
-</div>
-
-<div>
-
-<v-click>
-
-### Code
-
-````markdown
-```python
-def hello():
-    print("Hello!")
-```
-
-```cpp
-void setup() {
-    Serial.begin(115200);
-}
-```
-````
-
-</v-click>
-
-<v-click>
-
-### Tableaux et liens
-
-```markdown
-| Col 1 | Col 2 |
-|-------|-------|
-| A     | B     |
-
-[Texte du lien](https://url.com)
-![Alt image](image.png)
-```
-
-</v-click>
-
-</div>
-
-</div>
-
----
-
-# Documenter l'API MQTT
-
-### Section cruciale pour votre projet
-
-```markdown
-## API MQTT
-
-### Topics publiés (LilyGO → RPi)
-
-| Topic | Format | Description |
-|-------|--------|-------------|
-| `iot/{id}/out/btn1` | `{"state": 0\|1}` | État du bouton 1 |
-| `iot/{id}/out/pot1` | `{"value": 0-4095, "percent": 0-100}` | Valeur potentiomètre |
-| `iot/{id}/out/accel` | `{"x": float, "y": float, "z": float}` | Accélération en g |
-
-### Topics souscrits (RPi → LilyGO)
-
-| Topic | Format | Description |
-|-------|--------|-------------|
-| `iot/{id}/in/led1` | `{"state": 0\|1}` | Contrôle LED 1 |
-| `iot/{id}/in/led2` | `{"state": 0\|1}` | Contrôle LED 2 |
-
-### Exemple d'utilisation
-
-\`\`\`bash
-# Allumer LED 1
-mosquitto_pub -t "iot/alice/in/led1" -m '{"state": 1}'
-\`\`\`
-```
-
----
-
-# Organisation du dépôt GitHub
-
-### Structure recommandée pour votre projet
-
-```
-projet-shield-lilygo/
-├── README.md                 # Documentation principale
-├── docs/
-│   ├── architecture.md       # Détails de l'architecture
-│   ├── mqtt-api.md          # Documentation API complète
-│   └── images/              # Schémas et captures
-├── firmware/
-│   ├── src/
-│   │   └── main.cpp         # Code Arduino
-│   ├── include/
-│   │   └── config.h         # Configuration (template)
-│   └── platformio.ini       # Config PlatformIO
-├── raspberry/
-│   ├── main.py              # Application Python
-│   ├── requirements.txt     # Dépendances
-│   └── config.example.py    # Template de config
-├── kicad/
-│   └── shield-lilygo/       # Fichiers KiCad
-└── .gitignore               # Fichiers à ignorer
-```
-
----
-
-# Fichier .gitignore
-
-### Ne pas versionner les secrets!
-
-```txt
-# Secrets et configurations locales
-config.h
-config.py
-auth.h
-.env
-*.pem
-*.key
-
-# Fichiers de build
-build/
-.pio/
-__pycache__/
-*.pyc
-
-# Fichiers système
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Fichiers temporaires
-*.log
-*.tmp
-```
-
-<v-click>
-
-<div class="mt-2 p-2 bg-red-500 bg-opacity-20 rounded-lg text-center text-sm">
-
-**Ne JAMAIS commiter** : mots de passe, clés API, certificats privés, tokens!
-
-</div>
-
-</v-click>
-
----
-
-# Bonnes pratiques GitHub
-
-### Habitudes professionnelles
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-### Commits
-
-<v-click>
-
-- Messages **descriptifs** et clairs
-- Un commit = une modification logique
-- Préfixes utiles :
-  - `feat:` nouvelle fonctionnalité
-  - `fix:` correction de bug
-  - `docs:` documentation
-  - `refactor:` restructuration
-
-</v-click>
-
-<v-click>
-
-```bash
-git commit -m "feat: ajout lecture accéléromètre I2C"
-git commit -m "fix: correction filtrage ADC"
-git commit -m "docs: ajout documentation API MQTT"
-```
-
-</v-click>
-
-</div>
-
-<div>
-
-### Issues et Projects
-
-<v-click>
-
-- Créer des **Issues** pour suivre les tâches
-- Utiliser les **labels** (bug, enhancement, etc.)
-- **Projects** pour organiser le travail
-- Référencer les issues dans les commits
-
-</v-click>
-
-<v-click>
-
-```bash
-git commit -m "fix: correction #12 - LED ne s'allume pas"
-```
-
-</v-click>
-
-</div>
-
-</div>
-
----
-layout: section
----
-
-# Travail de la semaine
-## Prototype et documentation
-
----
-
-# Objectifs du laboratoire
-
-### Ce que vous devez accomplir
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-### Matériel (breadboard)
-
-<v-clicks>
-
-1. Montage complet sur breadboard :
-   - LEDs avec résistances
-   - Boutons avec pull-down/up
-   - Potentiomètres
-   - Accéléromètre I2C
-
-2. Validation de chaque composant
-3. Connexion au LilyGO
-
-</v-clicks>
-
-</div>
-
-<div>
-
-### Logiciel et documentation
-
-<v-clicks>
-
-4. Code de test Arduino :
-   - Lecture de tous les capteurs
-   - Contrôle des actionneurs
-   - Publication MQTT
-
-5. Ébauche interface Python
-
-6. README.md sur GitHub :
-   - Description du projet
-   - Schéma fonctionnel
-   - Topics MQTT
-
-</v-clicks>
-
-</div>
-
-</div>
-
----
-
-# Composants par étudiant
-
-### Rappel des assignations
+### Composants variables + MPU6050 obligatoire pour tous
 
 <div class="grid grid-cols-2 gap-6">
 
 <div>
 
-| # | Boutons | LEDs |
-|:-:|:-------:|:----:|
-| 1 | 2 | 1 |
-| 2 | 1 | 2 |
-| 3 | 3 | 1 |
-| 4 | 1 | 3 |
-| 5 | 2 | 2 |
-| 6 | 3 | 2 |
-| 7 | 2 | 3 |
-| 8 | 1 | 4 |
+| # | Boutons | LEDs | Potentiomètres |
+|:-:|:-------:|:----:|:--------------:|
+| 1 | 1 | 3 | 3 |
+| 2 | 2 | 2 | 3 |
+| 3 | 3 | 1 | 3 |
+| 4 | 1 | 4 | 2 |
+| 5 | 2 | 3 | 2 |
+| 6 | 3 | 2 | 2 |
+| 7 | 3 | 3 | 1 |
+| 8 | 2 | 4 | 1 |
 
 </div>
 
@@ -1912,12 +1018,20 @@ layout: section
 
 <v-click>
 
-- **2 potentiomètres**
-- **1 accéléromètre I2C**
-- **Connecteurs femelles** pour le LilyGO
-- Communication **MQTT fonctionnelle**
-- Interface **Python** sur RPi
-- **Documentation GitHub**
+- **MPU6050** — accéléromètre I2C (axes X, Y, Z)
+- **Connecteurs femelles** compatibles LilyGO A7670G
+- **Résistances de limitation** (LEDs : 330 Ω)
+- **Pull-up/pull-down** pour les boutons
+
+</v-click>
+
+<v-click>
+
+<div class="mt-2 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-xs">
+
+Le total de composants variables est **identique pour tous** (7). Voir l'énoncé du projet de mi-session.
+
+</div>
 
 </v-click>
 
@@ -1927,42 +1041,29 @@ layout: section
 
 ---
 
-# Critères d'évaluation
+# Travail de la semaine
 
-### Ce qui sera évalué en semaine 7
+<div class="grid grid-cols-2 gap-6">
 
-<div class="grid grid-cols-3 gap-3 text-sm">
+<div>
 
-<div class="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
+### Aujourd'hui
 
-### Matériel (10 pts)
-
-- Schéma KiCad complet
-- Routage PCB correct
-- Fichiers Gerber valides
-- Documentation technique
+1. Créer votre projet KiCad `shield-lilygo`
+2. Placer les composants de votre assignation
+3. Établir les connexions et labels
+4. Viser un **ERC sans erreurs**
 
 </div>
 
-<div class="p-3 bg-green-500 bg-opacity-20 rounded-lg">
+<div>
 
-### Logiciel (10 pts)
+### Labo 5
 
-- Code Arduino fonctionnel
-- Communication MQTT
-- Interface Python
-- Gestion des erreurs
-
-</div>
-
-<div class="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
-
-### Documentation (10 pts)
-
-- README complet
-- Schémas clairs
-- API documentée
-- Organisation du dépôt
+- Compléter le schéma KiCad du shield
+- Assigner les empreintes (THT)
+- Préparer pour le routage (semaine 6)
+- Pousser sur GitHub
 
 </div>
 
@@ -1970,52 +1071,9 @@ layout: section
 
 <v-click>
 
-<div class="mt-4 p-2 bg-orange-500 bg-opacity-20 rounded-lg text-center text-sm">
+<div class="mt-4 p-3 bg-blue-500 bg-opacity-20 rounded-lg text-center">
 
-**Cette semaine** : Prototype breadboard + code de test + début documentation
-**Prochaines semaines** : Schéma KiCad → Routage → Gerbers
-
-</div>
-
-</v-click>
-
----
-
-# Ressources disponibles
-
-### Où trouver de l'aide
-
-<div class="grid grid-cols-2 gap-4">
-
-<div>
-
-### Documentation technique
-
-- Datasheet de l'accéléromètre
-- Documentation ESP32 ADC
-- Exemples Arduino I2C
-- Guide Markdown GitHub
-
-</div>
-
-<div>
-
-### Outils
-
-- Arduino CLI sur le RPi
-- VS Code avec extensions
-- KiCad 8 sur votre poste
-- Claude Code / Gemini CLI
-
-</div>
-
-</div>
-
-<v-click>
-
-<div class="mt-4 p-2 bg-blue-500 bg-opacity-20 rounded-lg text-center">
-
-N'hésitez pas à utiliser les **assistants IA** pour déboguer votre code ou clarifier des concepts!
+**Vous avez déjà fait le workflow complet en Labo 3** — maintenant on l'applique à votre projet!
 
 </div>
 
@@ -2029,11 +1087,11 @@ class: text-center
 # Questions?
 
 <div class="text-xl mt-8">
-Prochaine étape : Mise en place du prototype breadboard!
+Prochaine étape : Schéma KiCad du shield LilyGO!
 </div>
 
-<div class="mt-4 text-sm">
-Semaine prochaine : Schéma KiCad du shield complet
+<div class="mt-4">
+Semaine prochaine : Prototype breadboard complet + début du routage PCB
 </div>
 
 ---

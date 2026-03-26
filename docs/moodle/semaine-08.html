@@ -10,7 +10,21 @@
 </head>
 <body>
 <div style="font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6;">
-  <p>Configuration avancée des <strong>paramètres radio LoRa</strong> et mise en place d'un <strong>réseau mesh</strong> multi-noeuds avec Meshtastic.</p>
+  <p>Présentation de la suite du cours : on passe aux modules <strong>LilyGO T-Beam SUPREME</strong> avec la technologie <strong>LoRa</strong> (Long Range) pour la communication longue portée sans infrastructure, et découverte de <strong>Meshtastic</strong> pour créer un réseau mesh décentralisé.</p>
+  <p><strong>Technologie LoRa :</strong></p>
+  <ul style="margin: 10px 0;">
+    <li><strong>Modulation CSS</strong> — Chirp Spread Spectrum, résistante aux interférences</li>
+    <li><strong>Portée</strong> — 2 à 15 km selon les paramètres et l'environnement</li>
+    <li><strong>Bande 915 MHz</strong> — ISM sans licence en Amérique du Nord</li>
+    <li><strong>Compromis</strong> — longue portée mais faible débit (0.3 à 50 kbps)</li>
+  </ul>
+  <p><strong>Meshtastic :</strong></p>
+  <ul style="margin: 10px 0;">
+    <li><strong>Firmware open source</strong> — transforme des radios LoRa en réseau mesh</li>
+    <li><strong>Réseau décentralisé</strong> — aucune infrastructure requise</li>
+    <li><strong>Chiffrement AES-256</strong> — communication sécurisée</li>
+    <li><strong>T-Beam SUPREME</strong> — ESP32-S3 + LoRa SX1262 + GPS</li>
+  </ul>
   <p><strong>Paramètres radio :</strong></p>
   <ul style="margin: 10px 0;">
     <li><strong>Spreading Factor (SF7-SF12)</strong> — plus élevé = plus de portée, moins de débit</li>
@@ -18,25 +32,28 @@
     <li><strong>Coding Rate (4/5 à 4/8)</strong> — redondance pour corriger les erreurs</li>
     <li><strong>Presets Meshtastic</strong> — SHORT_FAST, MEDIUM_FAST, LONG_SLOW, etc.</li>
   </ul>
-  <p><strong>Architecture mesh :</strong></p>
-  <ul style="margin: 10px 0;">
-    <li><strong>Rôles des noeuds</strong> — Client, Router, Router_Client</li>
-    <li><strong>Multi-hop</strong> — les messages sont relayés automatiquement</li>
-    <li><strong>Métriques</strong> — RSSI (force du signal) et SNR (rapport signal/bruit)</li>
-  </ul>
-  <p><strong>Labo 8 :</strong> configurer un réseau mesh en équipe, tester différents presets, mesurer les performances et documenter les résultats.</p>
+  <p><strong>Labo 8 :</strong> flasher le firmware Meshtastic sur T-Beam, effectuer un premier test de communication, et explorer les paramètres radio.</p>
+  <div style="margin-top: 15px; padding: 10px; background: #ffebee; border-left: 4px solid #f44336; border-radius: 4px;">
+    <p style="margin: 0 0 8px 0;"><strong>Rappel — remise du projet de mi-session :</strong></p>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li><strong>Mercredi PM</strong> — dernière séance dédiée à la programmation</li>
+      <li><strong>Jeudi</strong> — démonstration du fonctionnement en classe</li>
+      <li><strong>Projet complet : lundi 30 mars 2026 à 8h00</strong> — remise des documents sur GitHub (firmware, interface et documentation)</li>
+    </ul>
+    <p style="margin: 8px 0 0 0; font-size: 0.9em;"><em>Date de remise reportée en raison de la journée de tempête.</em></p>
+  </div>
   <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-left: 4px solid #2196F3; border-radius: 4px;">
     <p style="margin: 0 0 8px 0;"><strong>À faire pour la semaine prochaine :</strong></p>
     <ul style="margin: 0; padding-left: 20px;">
-      <li>Documenter les résultats des tests de portée</li>
-      <li>Lire la documentation sur la configuration gateway MQTT</li>
-      <li>Préparer l'équipement pour les tests terrain</li>
+      <li>Se familiariser avec l'application Meshtastic (Android/iOS)</li>
+      <li>Lire la documentation sur les rôles mesh (Client, Router, Router_Client)</li>
+      <li>Préparer des questions sur la configuration réseau mesh</li>
     </ul>
   </div>
   <p style="margin-top: 15px; padding: 10px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
-    <strong>Prochaine évaluation :</strong> TP Intégration LLM et automatisation — semaine 9 (20%)<br>
-    <em>Matière couverte :</em> LoRa/Meshtastic, gateway WiFi/MQTT, tests terrain, cartographie de couverture<br>
-    <em>Format :</em> démonstration pratique et rapport technique
+    <strong>Rappel évaluation :</strong> Projet de mi-session — lundi 30 mars 2026 (20%)<br>
+    <em>Démonstration :</em> jeudi en classe<br>
+    <em>Remise documents :</em> lundi 30 mars à 8h00 sur GitHub
   </p>
 </div>
 <script>

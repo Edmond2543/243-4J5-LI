@@ -2,7 +2,7 @@
 
 **Cours:** 243-4J5-LI – Objets connectés
 **Évaluation:** Projet de mi-session — Shield PCB pour LilyGO A7670G
-**Pondération totale:** 30% (20% Capacité 1 + 10% Capacité 2)
+**Pondération totale:** 20% (15% Capacité 1 + 5% Capacité 2)
 
 ---
 
@@ -233,7 +233,7 @@ $$\text{Points} = \text{Note sur 5} \times \frac{\text{Pondération}}{5}$$
 **Exemple :** Critère 2.3 Communication MQTT (15%), note 4/5
 $$\text{Points} = 4 \times \frac{15}{5} = 4 \times 3 = 12 \text{ points}$$
 
-**Note finale du projet :** Somme des points sur 100, puis ×0.30 pour la pondération dans le cours.
+**Note finale du projet :** Somme des points sur 100, puis ×0.20 pour la pondération dans le cours.
 
 ---
 
@@ -247,5 +247,8 @@ $$\text{Points} = 4 \times \frac{15}{5} = 4 \times 3 = 12 \text{ points}$$
 
 ---
 
-**Date de remise :** Semaine 7
+**Date de remise :** 23 mars 2026 à 8h00 (lundi matin)
+
+> **Important :** Les fichiers Gerber (PCB) doivent être remis au plus tard le **lundi 16 mars 2026 à 8h00**. Une note de **0** sera appliquée pour les critères 1.2 et 1.3 (Routage PCB et Fichiers de fabrication) si les Gerbers ne sont pas remis à temps, car la commande groupée des PCB est passée ce matin-là.
+
 **Mode de remise :** Git (branche `prenom-nom/projet-mi-session`)

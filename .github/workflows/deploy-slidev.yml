@@ -40,7 +40,11 @@ jobs:
         working-directory: ./theorie
         run: pnpm install
 
-      - name: Build all presentations
+      - name: Install Playwright for PDF export
+        working-directory: ./theorie
+        run: pnpm exec playwright install chromium
+
+      - name: Build all presentations and export PDFs
         working-directory: ./theorie
         env:
           NODE_OPTIONS: --max_old_space_size=4096
@@ -50,6 +54,10 @@ jobs:
             pnpm slidev build Semaine-$i/diaporama/slides.md \
               --base /semaine-$i/ \
               --out ../../../docs/semaine-$i
+            echo "Exporting PDF for Semaine-$i..."
+            pnpm slidev export Semaine-$i/diaporama/slides.md \
+              --output ../../../docs/semaine-$i/slides.pdf \
+              --timeout 120000 || echo "PDF export failed for Semaine-$i, continuing..."
           done
 
       - name: Convert plan de cours to HTML

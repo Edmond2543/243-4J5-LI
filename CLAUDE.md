@@ -238,6 +238,7 @@ Structure type d'une évaluation
 Conventions générales
 Langue
 Contenu en français
+Toujours utiliser les accents français (é, è, ê, à, ù, ç, etc.) dans tous les fichiers, y compris les fichiers HTML
 Termes techniques anglais acceptés entre parenthèses si nécessaire
 Pas d'emojis sauf si explicitement demandé
 Nommage des fichiers

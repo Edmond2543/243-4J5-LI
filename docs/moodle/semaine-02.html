@@ -10,31 +10,25 @@
 </head>
 <body>
 <div style="font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6;">
-  <p>Introduction au protocole <strong>MQTT</strong> (Message Queuing Telemetry Transport), le standard de communication pour l'IoT. Architecture <strong>publish/subscribe</strong> avec découplage spatial, temporel et de synchronisation.</p>
-  <p><strong>Concepts clés :</strong></p>
+  <p>Semaine dédiée à la <strong>finalisation du Labo 1</strong> : mise en place complète de l'environnement de développement distant avec <strong>Raspberry Pi</strong>, <strong>Cloudflare Tunnel</strong> et <strong>LilyGO A7670G</strong>.</p>
+  <p><strong>Objectifs à compléter :</strong></p>
   <ul style="margin: 10px 0;">
-    <li><strong>Topics hiérarchiques</strong> — structure avec séparateur / (ex: maison/salon/temperature)</li>
-    <li><strong>Wildcards</strong> — + (un niveau) et # (tous les niveaux)</li>
-    <li><strong>QoS</strong> — trois niveaux de fiabilité (0, 1, 2)</li>
-    <li><strong>Retained messages</strong> — dernière valeur conservée pour nouveaux subscribers</li>
-    <li><strong>Last Will Testament</strong> — message automatique si déconnexion anormale</li>
+    <li><strong>Raspberry Pi</strong> — Ubuntu Server fonctionnel avec accès réseau (WiFi ou Ethernet)</li>
+    <li><strong>Cloudflare Tunnel</strong> — accès SSH distant sécurisé sans IP publique</li>
+    <li><strong>Git + GitHub</strong> — dépôt configuré et synchronisation fonctionnelle</li>
+    <li><strong>Arduino CLI</strong> — compilation et flashage du LilyGO depuis le terminal</li>
+    <li><strong>LilyGO A7670G</strong> — premier programme (Blink) compilé et flashé avec succès</li>
   </ul>
-  <p><strong>Broker Mosquitto :</strong> configuration avec authentification et WebSocket (WSS) pour traverser Cloudflare Tunnel.</p>
-  <p><strong>WiFi Enterprise (WPA-EAP) :</strong> connexion au réseau du Cégep avec identifiants personnels via PEAP-MSCHAPv2.</p>
-  <p><strong>Labo 2 :</strong> configurer Mosquitto, créer le tunnel MQTT via Cloudflare, et établir une communication bidirectionnelle LilyGO ↔ RPi pour contrôler des LEDs.</p>
+  <p><strong>WiFi WPA-EAP :</strong> si vous utilisez le réseau du Cégep, assurez-vous d'avoir configuré NetworkManager avec PEAP-MSCHAPv2 (voir correctif semaine 1).</p>
+  <p><strong>Labo 1 (suite) :</strong> compléter toutes les étapes du laboratoire et valider le fonctionnement de bout en bout de la chaîne de développement.</p>
   <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-left: 4px solid #2196F3; border-radius: 4px;">
     <p style="margin: 0 0 8px 0;"><strong>À faire pour la semaine prochaine :</strong></p>
     <ul style="margin: 0; padding-left: 20px;">
-      <li>Finaliser la communication MQTT bidirectionnelle</li>
-      <li>Préparer le montage breadboard (LEDs, boutons)</li>
-      <li>Se préparer pour l'évaluation sommative de la semaine 3 (15%)</li>
+      <li>Terminer le Labo 1 (environnement de développement complet)</li>
+      <li>Vérifier que le Cloudflare Tunnel fonctionne depuis l'extérieur du Cégep</li>
+      <li>Se familiariser avec les commandes Arduino CLI</li>
     </ul>
   </div>
-  <p style="margin-top: 15px; padding: 10px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
-    <strong>Prochaine évaluation :</strong> Laboratoire capteurs et Python — semaine 3 (15%)<br>
-    <em>Matière couverte :</em> chaîne d'acquisition Raspberry Pi/LilyGO, communication MQTT, montage breadboard<br>
-    <em>Format :</em> démonstration pratique en laboratoire
-  </p>
 </div>
 <script>
   function sendHeight() {

@@ -10,30 +10,40 @@
 </head>
 <body>
 <div style="font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6;">
-  <p>Début du projet de mi-session : conception d'un <strong>shield PCB pour le LilyGO A7670G</strong>. Communication <strong>I2C</strong> avec accéléromètre et lecture <strong>ADC</strong> des potentiomètres.</p>
-  <p><strong>Protocole I2C :</strong></p>
+  <p>Introduction théorique à la conception de <strong>circuits imprimés (PCB)</strong> avec <strong>KiCad</strong>, logiciel libre et professionnel. Transformer le prototype breadboard du projet en un schéma électrique rigoureux, puis en layout PCB.</p>
+  <p><strong>Concepts PCB :</strong></p>
   <ul style="margin: 10px 0;">
-    <li><strong>Bus série 2 fils</strong> — SDA (données) et SCL (horloge)</li>
-    <li><strong>Adressage</strong> — chaque périphérique a une adresse unique (ex: 0x68)</li>
-    <li><strong>Résistances pull-up</strong> — maintiennent les lignes à l'état haut</li>
+    <li><strong>Schéma électrique</strong> — représentation logique des connexions (symboles, fils, labels)</li>
+    <li><strong>Empreintes (footprints)</strong> — dimensions physiques réelles des composants sur le PCB</li>
+    <li><strong>Pistes et pastilles</strong> — chemins de cuivre pour les connexions</li>
+    <li><strong>ERC</strong> — vérification des règles électriques avant routage</li>
+    <li><strong>Composants THT vs SMD</strong> — traversants (plus faciles à souder) vs CMS</li>
   </ul>
-  <p><strong>Conversion ADC :</strong></p>
+  <p><strong>Un symbole, plusieurs empreintes possibles :</strong> une résistance 10 kΩ peut être THT (R_Axial_DIN0207), ou SMD 0805, 0603, 0402 selon le montage voulu.</p>
+  <p><strong>Workflow KiCad :</strong></p>
   <ul style="margin: 10px 0;">
-    <li><strong>Résolution 12 bits</strong> — valeurs de 0 à 4095 sur l'ESP32</li>
-    <li><strong>ADC1 uniquement</strong> — ADC2 incompatible avec WiFi actif (GPIO 32-39)</li>
-    <li><strong>Filtrage</strong> — moyenne mobile ou filtre passe-bas (EMA) pour stabiliser</li>
+    <li><strong>Saisie du schéma</strong> — placement des symboles et connexions électriques</li>
+    <li><strong>Assignation des empreintes</strong> — lier chaque composant à ses dimensions physiques</li>
+    <li><strong>Importation dans l'éditeur PCB</strong> — mise en page physique du circuit</li>
   </ul>
-  <p><strong>Labo 5 :</strong> monter le prototype complet sur breadboard, tester tous les capteurs/actionneurs, et documenter le projet sur GitHub.</p>
+  <p><strong>Labo 5 :</strong> commencer le schéma KiCad du shield LilyGO A7670G — placer les composants assignés (LEDs, boutons, potentiomètres, accéléromètre MPU6050, connecteurs femelles) et établir toutes les connexions électriques.</p>
+  <div style="margin-top: 15px; padding: 10px; background: #ffebee; border-left: 4px solid #f44336; border-radius: 4px;">
+    <p style="margin: 0 0 8px 0;"><strong>Dates limites importantes :</strong></p>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li><strong>Gerbers (PCB) : lundi 16 mars 2026 à 8h00</strong> — remise obligatoire pour la commande groupée. Note de 0 pour la partie PCB si non remis à temps.</li>
+      <li><strong>Projet complet : lundi 23 mars 2026 à 8h00</strong> — firmware, interface et documentation.</li>
+    </ul>
+  </div>
   <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-left: 4px solid #2196F3; border-radius: 4px;">
     <p style="margin: 0 0 8px 0;"><strong>À faire pour la semaine prochaine :</strong></p>
     <ul style="margin: 0; padding-left: 20px;">
-      <li>Finaliser le prototype breadboard fonctionnel</li>
-      <li>Compléter le schéma KiCad avec tous les composants</li>
-      <li>Passer l'ERC sans erreurs</li>
+      <li>Compléter le schéma KiCad du shield (ERC sans erreurs)</li>
+      <li>Monter ou finaliser le prototype breadboard</li>
+      <li>Assigner les empreintes à tous les composants</li>
     </ul>
   </div>
   <p style="margin-top: 15px; padding: 10px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
-    <strong>Prochaine évaluation :</strong> Projet de mi-session — semaine 7 (20%)<br>
+    <strong>Prochaine évaluation :</strong> Projet de mi-session — 23 mars 2026 (20%)<br>
     <em>Matière couverte :</em> conception PCB KiCad, prototype breadboard, schéma électrique, routage<br>
     <em>Livrables :</em> fichiers KiCad, Gerbers, BOM, documentation technique
   </p>

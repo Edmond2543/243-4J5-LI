@@ -10,34 +10,48 @@
 </head>
 <body>
 <div style="font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6;">
-  <p>Finalisation du <strong>routage PCB</strong> et génération des <strong>fichiers Gerber</strong> pour la fabrication. Vérification DRC et préparation à la commande chez un fabricant.</p>
-  <p><strong>Routage avancé :</strong></p>
+  <p>Prototype <strong>breadboard</strong> complet du shield LilyGO et finalisation du <strong>routage PCB</strong>. Communication <strong>I2C</strong> avec l'accéléromètre MPU6050 et lecture <strong>ADC</strong> des potentiomètres.</p>
+  <p><strong>Protocole I2C (accéléromètre MPU6050) :</strong></p>
   <ul style="margin: 10px 0;">
-    <li><strong>Plan de masse</strong> — couche Bottom remplie de GND pour réduire le bruit</li>
-    <li><strong>Vias</strong> — trous métallisés pour connecter les couches Top et Bottom</li>
-    <li><strong>Largeur des pistes</strong> — 0.25mm pour signaux, 0.5mm pour alimentation</li>
+    <li><strong>Bus série 2 fils</strong> — SDA (données) et SCL (horloge), résistances pull-up 4.7 kΩ</li>
+    <li><strong>Adresse I2C</strong> — 0x68 (MPU6050), chaque périphérique a une adresse unique</li>
+    <li><strong>Registres</strong> — lecture des axes X, Y, Z (accélération 16 bits par axe)</li>
+    <li><strong>Bibliothèque Adafruit_MPU6050</strong> — simplifie l'utilisation du capteur</li>
+  </ul>
+  <p><strong>Conversion ADC (potentiomètres) :</strong></p>
+  <ul style="margin: 10px 0;">
+    <li><strong>Résolution 12 bits</strong> — valeurs de 0 à 4095 sur l'ESP32</li>
+    <li><strong>ADC1 uniquement</strong> — GPIO 32-39, compatible avec WiFi actif</li>
+    <li><strong>Filtrage EMA</strong> — lissage exponentiel pour stabiliser les lectures bruyantes</li>
+  </ul>
+  <p><strong>Finalisation routage PCB :</strong></p>
+  <ul style="margin: 10px 0;">
+    <li><strong>Plan de masse</strong> — couche Bottom en GND pour réduire le bruit</li>
+    <li><strong>Vias</strong> — connexions entre les couches Top et Bottom</li>
     <li><strong>DRC</strong> — vérification des règles de conception (clearance, drill)</li>
+    <li><strong>Gerbers</strong> — génération des fichiers de fabrication (.GTL, .GBL, .DRL, BOM)</li>
   </ul>
-  <p><strong>Fichiers de fabrication :</strong></p>
-  <ul style="margin: 10px 0;">
-    <li><strong>Gerber</strong> — format standard pour chaque couche (.GTL, .GBL, .GTS, etc.)</li>
-    <li><strong>Fichier de perçage</strong> — .DRL au format Excellon</li>
-    <li><strong>BOM</strong> — liste des composants à acheter</li>
-  </ul>
-  <p><strong>Labo 6 :</strong> finaliser le routage, passer le DRC sans erreur, générer les Gerbers et les vérifier dans un visualiseur.</p>
+  <p><strong>Labo 6 :</strong> compléter le routage PCB, passer le DRC sans erreurs, générer les Gerbers, et finaliser la documentation GitHub.</p>
+  <div style="margin-top: 15px; padding: 10px; background: #ffebee; border-left: 4px solid #f44336; border-radius: 4px;">
+    <p style="margin: 0 0 8px 0;"><strong>Dates limites importantes :</strong></p>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li><strong>Gerbers (PCB) : mardi 17 mars 2026 à 8h00</strong> — remise obligatoire pour la commande groupée. Note de 0 pour la partie PCB si non remis à temps.</li>
+      <li><strong>Projet complet : lundi 30 mars 2026 à 8h00</strong> — firmware, interface et documentation sur GitHub.</li>
+    </ul>
+  </div>
   <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-left: 4px solid #2196F3; border-radius: 4px;">
     <p style="margin: 0 0 8px 0;"><strong>À faire pour la semaine prochaine :</strong></p>
     <ul style="margin: 0; padding-left: 20px;">
-      <li>Finaliser tous les livrables du projet de mi-session</li>
-      <li>Vérifier les Gerbers dans un visualiseur en ligne</li>
-      <li>Compléter la documentation technique</li>
-      <li>Préparer la remise du projet (20%)</li>
+      <li><strong>Remettre les Gerbers avant le mardi 17 mars à 8h00</strong> (commande groupée)</li>
+      <li>Vérifier les Gerbers dans un visualiseur en ligne (JLCPCB ou Gerbv)</li>
+      <li>Compléter la documentation technique (README.md, schéma fonctionnel, API MQTT)</li>
+      <li>Poursuivre le firmware et l'interface pour la remise du 30 mars</li>
     </ul>
   </div>
   <p style="margin-top: 15px; padding: 10px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
-    <strong>Prochaine évaluation :</strong> Projet de mi-session — semaine 7 (20%)<br>
+    <strong>Prochaine évaluation :</strong> Projet de mi-session — 30 mars 2026 (20%)<br>
     <em>Matière couverte :</em> conception PCB KiCad, prototype breadboard, schéma électrique, routage<br>
-    <em>Livrables :</em> fichiers KiCad, Gerbers, BOM, documentation technique
+    <em>Livrables :</em> fichiers KiCad, Gerbers (17 mars), BOM, documentation technique
   </p>
 </div>
 <script>

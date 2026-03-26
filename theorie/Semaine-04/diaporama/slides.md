@@ -13,6 +13,7 @@ drawings:
   persist: false
 transition: slide-left
 mdc: true
+download: true
 ---
 
 # Objets connectés
@@ -585,13 +586,7 @@ Représentation **graphique** d'un composant dans le schéma.
 
 Représentation **physique** des pastilles de soudure.
 
-```
-  ●───●───●───●
-  │   │   │   │
-  │   └───┘   │
-  │           │
-  ●───●───●───●
-```
+<img src="https://kicad-info.s3.dualstack.us-west-2.amazonaws.com/original/3X/8/4/8488bc2eb7a3c90e08fa000e7eddf64c37fed388.png" class="rounded-lg" style="max-height: 200px; width: 100%; object-fit: contain;" />
 
 - Dimensions exactes
 - Espacement des broches

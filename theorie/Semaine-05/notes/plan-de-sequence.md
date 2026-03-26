@@ -1,76 +1,89 @@
 # Plan de séquence - Semaine 05
 
 ## Titre
-Projet de mi-session - Shield LilyGO A7670G
+Introduction KiCad et dessin de PCB (contenu reporté de la semaine 4)
 
 ## Objectifs de la semaine
-- Réaliser un prototype breadboard fonctionnel et validé
-- Programmer le code de test pour chaque composant
-- Intégrer l'interface avec l'écran tactile du Raspberry Pi
-- Documenter le projet avec Markdown sur GitHub
+- Comprendre les concepts fondamentaux de la conception PCB
+- Maîtriser les modules principaux de KiCad 8
+- Distinguer les technologies THT et SMD
+- Saisir la relation symbole ↔ empreinte et savoir qu'un symbole peut avoir plusieurs empreintes
+- Démarrer le schéma KiCad du shield LilyGO dans le cadre du projet de mi-session
 
 ## Contenu théorique
 
-### Communication I2C et accéléromètre
-- Protocole I2C : adressage, SDA/SCL, vitesse
-- Accéléromètre : axes X/Y/Z, registres, calibration
-- Bibliothèques Arduino pour I2C
-- Lecture et interprétation des données d'accélération
+### Concepts PCB
+- Différence entre schéma électrique et dessin PCB
+- Couches d'un PCB : cuivre (Top/Bottom), sérigraphie, masque de soudure, substrat FR4
+- Empreintes (footprints) : relation symbole ↔ empreinte
+- Exemple : résistance — un seul symbole, plusieurs empreintes (THT, 0805, 0603, 0402)
+- Vérification des règles électriques (ERC) et de conception (DRC)
+- Technologies de montage : THT (Through-Hole) vs SMD (Surface Mount Device)
 
-### Conversion analogique-numérique (ADC)
-- Principes de l'ADC sur ESP32
-- Résolution et plage de tension
-- Lecture des potentiomètres
-- Filtrage et lissage des valeurs
+### Modules KiCad 8
+- Éditeur de schéma (Schematic Editor) : symboles, fils, labels, annotations
+- Éditeur PCB (PCB Editor) : empreintes, routage, plan de masse
+- Gestionnaire d'empreintes (Footprint Editor) : bibliothèques, association symbole/empreinte
+- Visionneuse 3D : vérification visuelle du résultat final
 
-### Architecture applicative
-- Flux de données : capteurs → LilyGO → MQTT → RPi
-- Structure des topics MQTT pour le projet
-- Interface utilisateur sur écran tactile (GUI terminal Python)
-- Scénarios d'interaction (jeu, dashboard, contrôle)
+### Workflow complet : schéma → PCB → Gerbers
+- Saisie du schéma et annotation des composants
+- Association des empreintes (assign footprints)
+- Transfert vers l'éditeur PCB (update PCB from schematic)
+- Placement des composants et routage
+- Génération des fichiers de fabrication (Gerbers, BOM, fichiers de perçage)
 
-### Documentation technique avec GitHub
-- Structure d'un README.md efficace
-- Syntaxe Markdown : titres, listes, code, tableaux, images
-- Organisation de la documentation dans un dépôt
-- Bonnes pratiques : badges, table des matières, exemples
-- Utilisation des Issues et Projects pour le suivi
+### Assignation des composants par étudiant
+| Étudiant | Boutons | LEDs | Potentiomètres |
+|:--------:|:-------:|:----:|:--------------:|
+| 1 | 1 | 3 | 3 |
+| 2 | 2 | 2 | 3 |
+| 3 | 3 | 1 | 3 |
+| 4 | 1 | 4 | 2 |
+| 5 | 2 | 3 | 2 |
+| 6 | 3 | 2 | 2 |
+| 7 | 3 | 3 | 1 |
+| 8 | 2 | 4 | 1 |
+
+MPU6050 (accéléromètre I2C) + connecteurs femelles LilyGO : obligatoires pour tous.
 
 ## Activités
 
 ### Théorie (2h)
-- Communication I2C et lecture de l'accéléromètre
-- ADC et lecture des potentiomètres
-- Interface tactile GUI terminal sur RPi
-- Documentation Markdown et GitHub
-- Présentation des requis et assignations
+- Présentation des concepts PCB (couches, THT vs SMD, empreintes)
+- Tour des modules KiCad 8 avec démonstration
+- Exemple résistance : un symbole → plusieurs empreintes possibles
+- Workflow complet illustré
+- Introduction au Labo 05 : shield LilyGO
 
-### Laboratoire (3h)
-- Montage breadboard complet
-  - LEDs, boutons, potentiomètres, accéléromètre
-- Code de test pour chaque composant
-- Intégration MQTT avec le broker existant
-- Ébauche de l'interface GUI terminal sur RPi
-- Création du README.md du projet sur GitHub
+### Laboratoire 05 — Schéma KiCad du shield LilyGO (3h)
+- Créer le projet KiCad `shield-lilygo`
+- Placer les composants assignés dans l'éditeur de schéma
+- Établir les connexions entre composants (fils et labels de réseau)
+- Passer la vérification ERC et corriger les erreurs signalées
+- Sauvegarder et pousser sur GitHub
 
 ## Travaux hors classe
-- Finaliser le prototype breadboard
-- Développer l'interface GUI terminal sur RPi
-- Compléter la documentation GitHub (README, schémas)
+- Compléter la correction des erreurs ERC si non terminée en classe
+- Monter le prototype breadboard avec les composants assignés
+- Assigner les empreintes (THT) à tous les composants
+- Préparer les questions sur le routage (semaine 6)
 
 ## Évaluation
-- Suivi de progression (formatif)
-- Démonstration du prototype fonctionnel
+- Suivi de progression du schéma KiCad (formatif)
+- Vérification que l'ERC passe sans erreurs bloquantes
 
 ## Ressources
-- Fiche technique de l'accéléromètre
-- Documentation ESP32 ADC
-- Exemples de code I2C Arduino
-- Code de l'interface GUI terminal (Labo 1-2)
-- Guide Markdown de GitHub
+- Documentation officielle KiCad 8
+- Bibliothèques de symboles KiCad (standard + personnalisées du projet)
+- Fichiers de départ du projet shield LilyGO sur GitHub
+- Tutoriels vidéo KiCad (saisie de schéma)
+- Énoncé du projet de mi-session (Evaluation-02/Projet-mi-session.md)
 
 ## Notes pour l'enseignant
-- Vérifier les assignations de composants par étudiant
-- S'assurer que les accéléromètres I2C sont fonctionnels
-- Avoir des exemples de code prêts pour le dépannage
-- Accompagner le développement de l'interface RPi
+- Ce cours reprend la théorie initialement prévue à la semaine 4 (non présentée)
+- Insister sur la distinction schéma/PCB et symbole/empreinte, source de confusion fréquente
+- S'assurer que les assignations de composants par étudiant sont confirmées avant le labo
+- Prévoir du temps pour le dépannage des bibliothèques KiCad manquantes
+- Le Labo 05 est la première étape concrète du projet de mi-session (shield LilyGO)
+- **Annoncer les dates limites : Gerbers le lundi 16 mars à 8h00, projet complet le lundi 23 mars à 8h00**

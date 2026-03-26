@@ -13,6 +13,7 @@ drawings:
   persist: false
 transition: slide-left
 mdc: true
+download: true
 ---
 
 # Objets connectés
