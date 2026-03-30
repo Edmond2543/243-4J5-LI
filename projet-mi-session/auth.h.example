@@ -1,0 +1,11 @@
+#ifndef AUTH_H
+#define AUTH_H
+
+const char* WIFI_SSID = "VOTRE_WIFI";
+const char* WIFI_PASSWORD = "VOTRE_MOT_DE_PASSE";
+const char* MQTT_BROKER = "mqtt.edmondguenette.org";
+const char* MQTT_USER = "esp_user";
+const char* MQTT_PASS = "VOTRE_MOT_DE_PASSE_MQTT";
+const char* MQTT_CLIENT_ID = "esp32-XXXXXX";
+
+#endif
