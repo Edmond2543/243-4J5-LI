@@ -219,7 +219,7 @@ void loop() {
   }
   
   // Lecture des boutons non-bloquante
-  if (millis() - lastBtn > 50) {
+  if (millis() - lastBtn > 250) {
     lastBtn = millis();
     int r = digitalRead(BTN_RED_PIN);
     int g = digitalRead(BTN_GREEN_PIN);

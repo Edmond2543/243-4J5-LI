@@ -201,18 +201,22 @@ class MQTTControlUI:
         tab_w = w // len(self.pages)
         for i, title in enumerate(self.pages):
             attr = curses.color_pair(10) if i == self.current_page else curses.color_pair(11)
-            # Bouton de tabulation
+            # Bouton de tabulation plus gros (3 lignes de haut)
             label = f" {title} "
             start_x = i * tab_w
             end_x = start_x + tab_w - 1
             
-            # Remplissage
             pad = (tab_w - len(label)) // 2
-            try:
-                self.stdscr.addstr(0, start_x, " "*pad + label + " "*(tab_w - pad - len(label)), attr | curses.A_BOLD)
-            except: pass
             
-            self.tabs_rects.append((0, start_x, 0, end_x, i)) # row_start, col_start, row_end, col_end, tab_index
+            for row in range(3):
+                try:
+                    if row == 1:
+                        self.stdscr.addstr(row, start_x, " "*pad + label + " "*(tab_w - pad - len(label)), attr | curses.A_BOLD)
+                    else:
+                        self.stdscr.addstr(row, start_x, " "*tab_w, attr | curses.A_BOLD)
+                except: pass
+            
+            self.tabs_rects.append((0, start_x, 2, end_x, i)) # row_start, col_start, row_end, col_end, tab_index
 
     def _draw_page_control(self, h, w):
         # LEDs
