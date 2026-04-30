@@ -25,7 +25,7 @@
 
 const int LED_RED = 32;       // Actuator led_1
 const int LED_GREEN = 33;     // Actuator led_2
-const int BTN_GREEN_PIN = 34; // Button 1
+const int BTN_GREEN_PIN = 25; // Button 1
 const int BTN_RED_PIN = 35;   // Button 2
 
 // Topics MQTT - Convention poste-06
