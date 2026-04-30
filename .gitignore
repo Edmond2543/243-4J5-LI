@@ -2,8 +2,8 @@
 labo/Labo-02/led-control/mqtt_config.py
 labo/Labo-02/code/lilygo_lte_mqtt/auth.h
 labo/Labo-02/code/lilygo_wifi_mschapv2/auth.h
-projet-mi-session/auth.h
-projet-mi-session/mqtt_config.py
+projet-finale/projet_finale/auth.h
+projet-finale/mqtt_config.py
 
 # Python
 __pycache__/

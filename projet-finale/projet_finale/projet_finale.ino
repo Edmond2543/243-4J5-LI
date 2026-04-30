@@ -1,16 +1,17 @@
-// LilyGO T-SIM A7670G - Version Projet Mi-Session
+// LilyGO T-SIM A7670G - Hybride WiFi / LTE - Site #6
 #define TINY_GSM_MODEM_SIM7600
 #define TINY_GSM_RX_BUFFER 1024
 
 #include <TinyGsmClient.h>
 #include <PubSubClient.h>
+#include <Wire.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <BH1750.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <esp_wpa2.h>
 #include <Preferences.h>
-#include <Wire.h>
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
 
 #define SSLCLIENT_INSECURE_ONLY
 #include <ESP_SSLClient.h>
@@ -22,27 +23,28 @@
 #define MODEM_RX 27
 #define MODEM_PWRKEY 4
 
-// --- CONFIGURATION PINS ---
-const int LED_RED = 15;
-const int LED_GREEN = 27;
-const int BTN_RED_PIN = 32;
-const int BTN_GREEN_PIN = 33;
-const int POT_R_PIN = 34;
-const int POT_G_PIN = 35;
-const int POT_B_PIN = 39;
+const int LED_RED = 32;       // Actuator led_1
+const int LED_GREEN = 33;     // Actuator led_2
+const int BTN_GREEN_PIN = 25; // Button 1
+const int BTN_RED_PIN = 35;   // Button 2
 
-char STATUS_TOPIC[60];
-char MODE_SET_TOPIC[60];
-char LED_RED_SET_TOPIC[60];
-char LED_GREEN_SET_TOPIC[60];
-char BTN_RED_STATE_TOPIC[60];
-char BTN_GREEN_STATE_TOPIC[60];
+// Topics MQTT - Convention poste-06
+const char* STATUS_TOPIC = "hydro-limoilou/poste-06/status";
+const char* MODE_SET_TOPIC = "hydro-limoilou/poste-06/config/mode/set";
+const char* TELEMETRY_VIBRATION_TOPIC = "hydro-limoilou/poste-06/telemetry/vibration";
+const char* TELEMETRY_LIGHT_TOPIC = "hydro-limoilou/poste-06/telemetry/light";
+const char* LED_1_SET_TOPIC = "hydro-limoilou/poste-06/actuators/led_1";
+const char* LED_2_SET_TOPIC = "hydro-limoilou/poste-06/actuators/led_2";
+const char* BTN_1_STATE_TOPIC = "hydro-limoilou/poste-06/buttons/1/state";
+const char* BTN_2_STATE_TOPIC = "hydro-limoilou/poste-06/buttons/2/state";
 
 HardwareSerial SerialAT(1);
 Preferences preferences;
+bool useWiFi = true; // Mode par défaut
+
+// Capteurs I2C
 Adafruit_MPU6050 mpu;
-bool useWiFi = false;
-bool mpuOk = false;
+BH1750 lightMeter(0x23);
 
 // WebSocket Wrapper
 class WebSocketClient : public Client {
@@ -100,92 +102,137 @@ PubSubClient mqttClient(wsClient);
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
   String msg = ""; for(int i=0; i<length; i++) msg += (char)payload[i];
-  if (strcmp(topic, LED_RED_SET_TOPIC) == 0) digitalWrite(LED_RED, (msg == "ON") ? HIGH : LOW);
-  else if (strcmp(topic, LED_GREEN_SET_TOPIC) == 0) digitalWrite(LED_GREEN, (msg == "ON") ? HIGH : LOW);
+  Serial.println("[MQTT] Rx: " + String(topic) + " = " + msg);
+  
+  if (strcmp(topic, LED_1_SET_TOPIC) == 0) digitalWrite(LED_RED, (msg == "ON") ? HIGH : LOW);
+  else if (strcmp(topic, LED_2_SET_TOPIC) == 0) digitalWrite(LED_GREEN, (msg == "ON") ? HIGH : LOW);
   else if (strcmp(topic, MODE_SET_TOPIC) == 0) {
     bool targetWiFi = (msg == "WIFI");
-    if (targetWiFi != useWiFi) {
+    if (targetWiFi != useWiFi) { // PROTECTION BOUCLE : On ne reboot que si différent
         preferences.begin("net-cfg", false);
-        preferences.putBool("mode_v3", targetWiFi);
+        preferences.putBool("mode_v4", targetWiFi);
         preferences.end();
+        Serial.println("[SYSTEM] Changement de mode demandé vers " + msg + ". Reboot...");
         delay(1000); ESP.restart();
+    } else {
+        Serial.println("[SYSTEM] Déjà en mode " + msg + ". Ignoré.");
     }
   }
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200); delay(1000);
+  Serial.println("\n\n=== HYDRO LIMOILOU - POSTE 06 ===");
+  
   preferences.begin("net-cfg", false);
-  useWiFi = preferences.getBool("mode_v3", false);
+  useWiFi = preferences.getBool("mode_v4", true); // WiFi par défaut
   preferences.end();
   
   pinMode(LED_RED, OUTPUT); pinMode(LED_GREEN, OUTPUT);
   pinMode(BTN_RED_PIN, INPUT_PULLUP); pinMode(BTN_GREEN_PIN, INPUT_PULLUP);
   
-  Wire.begin(21, 22);
-  mpuOk = mpu.begin();
-  if (mpuOk) mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
+  Wire.begin();
+  if (!mpu.begin(0x68)) {
+    Serial.println("[I2C] Erreur MPU6050");
+  } else {
+    Serial.println("[I2C] MPU6050 OK");
+  }
+  
+  if (!lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE)) {
+    Serial.println("[I2C] Erreur BH1750");
+  } else {
+    Serial.println("[I2C] BH1750 OK");
+  }
 
-  snprintf(STATUS_TOPIC, 60, "%s/status", MQTT_CLIENT_ID);
-  snprintf(MODE_SET_TOPIC, 60, "%s/config/mode/set", MQTT_CLIENT_ID);
-  snprintf(LED_RED_SET_TOPIC, 60, "%s/led/1/set", MQTT_CLIENT_ID);
-  snprintf(LED_GREEN_SET_TOPIC, 60, "%s/led/2/set", MQTT_CLIENT_ID);
-  snprintf(BTN_RED_STATE_TOPIC, 60, "%s/button/2/state", MQTT_CLIENT_ID);
-  snprintf(BTN_GREEN_STATE_TOPIC, 60, "%s/button/1/state", MQTT_CLIENT_ID);
-
+  bool ok = false;
   if (useWiFi) {
-    WiFi.mode(WIFI_STA);
+    Serial.println("[MODE] WIFI ENTERPRISE");
+    WiFi.disconnect(true); WiFi.mode(WIFI_STA);
     esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY));
     esp_wifi_sta_wpa2_ent_set_username((uint8_t *)EAP_USERNAME, strlen(EAP_USERNAME));
     esp_wifi_sta_wpa2_ent_set_password((uint8_t *)EAP_PASSWORD, strlen(EAP_PASSWORD));
-    esp_wifi_sta_wpa2_ent_enable(); WiFi.begin(WIFI_SSID);
-    unsigned long start = millis();
-    while (WiFi.status() != WL_CONNECTED && millis()-start < 20000) delay(500);
-    if (WiFi.status() == WL_CONNECTED) sslClient.setClient(&wifiClient);
+    esp_wifi_sta_wpa2_ent_enable(); 
+    WiFi.begin(WIFI_SSID);
+    while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+    Serial.println("\n[WIFI] OK! IP: " + WiFi.localIP().toString()); 
+    ok = true; 
+    sslClient.setClient(&wifiClient);
   } else {
+    Serial.println("[MODE] LTE CELLULAIRE");
     pinMode(MODEM_PWRKEY, OUTPUT); digitalWrite(MODEM_PWRKEY, HIGH); delay(100); digitalWrite(MODEM_PWRKEY, LOW); delay(1000); digitalWrite(MODEM_PWRKEY, HIGH);
     SerialAT.begin(115200, SERIAL_8N1, MODEM_RX, MODEM_TX);
     if (modem.restart() && modem.waitForNetwork(45000L) && modem.gprsConnect(APN, APN_USER, APN_PASS)) {
-      sslClient.setClient(&gsmClient);
+      Serial.println("[LTE] OK! IP: " + modem.localIP().toString()); ok = true; sslClient.setClient(&gsmClient);
     }
   }
+
+  if(!ok) { Serial.println("[ERREUR] Connexion impossible. Reboot dans 10s."); delay(10000); ESP.restart(); }
 
   sslClient.setInsecure();
   mqttClient.setServer(MQTT_BROKER, 443);
   mqttClient.setCallback(mqttCallback);
 }
 
-unsigned long lastStat = 0, lastBtn = 0;
+unsigned long lastTelemetry = 0, lastBtn = 0;
 int lastR = HIGH, lastG = HIGH;
 
 void loop() {
   if (!mqttClient.connected()) {
     if(wsClient.connect(MQTT_BROKER, 443)) {
-      if(mqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS)) {
-        mqttClient.subscribe(LED_RED_SET_TOPIC); mqttClient.subscribe(LED_GREEN_SET_TOPIC); mqttClient.subscribe(MODE_SET_TOPIC);
+      if(mqttClient.connect("poste-06-client", MQTT_USER, MQTT_PASS)) {
+        Serial.println("[MQTT] Connecté");
+        mqttClient.subscribe(LED_1_SET_TOPIC); 
+        mqttClient.subscribe(LED_2_SET_TOPIC);
+        mqttClient.subscribe(MODE_SET_TOPIC);
       }
     }
     if(!mqttClient.connected()) delay(5000);
   }
   mqttClient.loop();
   
-  if (millis() - lastStat > 500) {
-    lastStat = millis();
+  // Publication toutes les 10 secondes (capteurs I2C et statut)
+  if (millis() - lastTelemetry > 10000) {
+    lastTelemetry = millis();
+    unsigned long uptime = millis() / 1000;
+    
+    // 1. Status Payload
     int sig = useWiFi ? WiFi.RSSI() : modem.getSignalQuality();
-    float ax = 0, ay = 0, az = 0;
-    if (mpuOk) { 
-        sensors_event_t a, g, temp; 
-        mpu.getEvent(&a, &g, &temp); 
-        ax = a.acceleration.x; ay = a.acceleration.y; az = a.acceleration.z; 
-    }
-    String s = "{\"mode\":\"" + String(useWiFi ? "WIFI" : "LTE") + "\", \"sig\":" + String(sig) + ", \"r\":" + String(analogRead(POT_R_PIN)) + ", \"g\":" + String(analogRead(POT_G_PIN)) + ", \"b\":" + String(analogRead(POT_B_PIN)) + ", \"ax\":" + String(ax, 1) + ", \"ay\":" + String(ay, 1) + ", \"az\":" + String(az, 1) + "}";
-    mqttClient.publish(STATUS_TOPIC, s.c_str());
+    String modeStr = useWiFi ? "WIFI" : "LTE";
+    String statusPayload = "{\"uptime\":" + String(uptime) + ", \"rssi\":" + String(sig) + ", \"link\":\"" + modeStr + "\"}";
+    mqttClient.publish(STATUS_TOPIC, statusPayload.c_str());
+    
+    // 2. Vibration Payload (MPU6050)
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
+    String vibPayload = "{\"x\":" + String(a.acceleration.x) + 
+                        ", \"y\":" + String(a.acceleration.y) + 
+                        ", \"z\":" + String(a.acceleration.z) + 
+                        ", \"ts\":" + String(uptime) + "}";
+    mqttClient.publish(TELEMETRY_VIBRATION_TOPIC, vibPayload.c_str());
+    
+    // 3. Light Payload (BH1750)
+    float lux = lightMeter.readLightLevel();
+    String lightPayload = "{\"value\":" + String(lux) + 
+                          ", \"unit\":\"lux\"" + 
+                          ", \"ts\":" + String(uptime) + "}";
+    mqttClient.publish(TELEMETRY_LIGHT_TOPIC, lightPayload.c_str());
   }
   
-  if (millis() - lastBtn > 50) {
+  // Lecture des boutons non-bloquante
+  if (millis() - lastBtn > 250) {
     lastBtn = millis();
-    int r = digitalRead(BTN_RED_PIN), g = digitalRead(BTN_GREEN_PIN);
-    if (r != lastR) { lastR = r; mqttClient.publish(BTN_RED_STATE_TOPIC, (r == LOW) ? "PRESSED" : "RELEASED"); if(r==LOW) { digitalWrite(LED_RED, !digitalRead(LED_RED)); mqttClient.publish(LED_RED_SET_TOPIC, digitalRead(LED_RED) ? "ON" : "OFF"); } }
-    if (g != lastG) { lastG = g; mqttClient.publish(BTN_GREEN_STATE_TOPIC, (g == LOW) ? "PRESSED" : "RELEASED"); if(g==LOW) { digitalWrite(LED_GREEN, !digitalRead(LED_GREEN)); mqttClient.publish(LED_GREEN_SET_TOPIC, digitalRead(LED_GREEN) ? "ON" : "OFF"); } }
+    int r = digitalRead(BTN_RED_PIN);
+    int g = digitalRead(BTN_GREEN_PIN);
+    
+    if (r != lastR) { 
+      lastR = r; 
+      mqttClient.publish(BTN_2_STATE_TOPIC, (r == LOW) ? "PRESSED" : "RELEASED"); 
+      if(r == LOW) digitalWrite(LED_RED, !digitalRead(LED_RED)); 
+    }
+    if (g != lastG) { 
+      lastG = g; 
+      mqttClient.publish(BTN_1_STATE_TOPIC, (g == LOW) ? "PRESSED" : "RELEASED"); 
+      if(g == LOW) digitalWrite(LED_GREEN, !digitalRead(LED_GREEN)); 
+    }
   }
 }
