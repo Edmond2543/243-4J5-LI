@@ -6,7 +6,6 @@ import json
 from queue import Queue
 import logging
 import math
-
 import curses
 import paho.mqtt.client as mqtt
 import ssl
@@ -76,7 +75,7 @@ class TouchReader(threading.Thread):
                     if event.value == 1: self.event_queue.put(("tap", self.current_x, self.current_y))
         except: pass
 
-# ---------- UI ----------
+# ---------- UI AVEC ONGLETS ----------
 class MQTTControlUI:
     def __init__(self, stdscr, touch_reader, event_queue, serial_logs):
         self.stdscr = stdscr
@@ -85,27 +84,38 @@ class MQTTControlUI:
         self.serial_logs = serial_logs
         self.running = True
         
+        self.device_id = MQTT_CONFIG.get("device_id", "hydro-limoilou/poste-06")
+
+        # États des capteurs / actuateurs
         self.led1_on = False
         self.led2_on = False
+        self.btn1_state = "RELEASED"
+        self.btn2_state = "RELEASED"
+        
         self.remote_mode = "---"
         self.remote_sig = 0
-        self.rgb_r = 0
-        self.rgb_g = 0
-        self.rgb_b = 0
-        self.accel_x = 0
-        self.accel_y = 0
-        self.accel_z = 0
+        self.uptime = 0
+        
+        self.accel_x = 0.0
+        self.accel_y = 0.0
+        self.accel_z = 9.81
+        
+        self.light_lux = 0.0
+        
         self.mqtt_events = []
-        self.serial_display = []
+        self.alarms = [] # dicts: {"msg": str, "ts": time, "ack": bool}
+        
+        # Onglets
+        self.pages = ["1. CONTRÔLE", "2. TÉLÉMÉTRIE", "3. ALARMES", "4. RÉSEAU"]
+        self.current_page = 0
+        self.tabs_rects = []
+        self.buttons_rects = []
         
         self.client = mqtt.Client(client_id=f"pi-gui-{int(time.time())}", transport="websockets")
         self.client.tls_set(cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS)
         self.client.username_pw_set(MQTT_CONFIG.get("username"), MQTT_CONFIG.get("password"))
         self.client.on_connect = self._on_connect
         self.client.on_message = self._on_message
-        
-        self.device_id = MQTT_CONFIG.get("device_id")
-        self.topic_mode = f"{self.device_id}/config/mode/set"
         
         try:
             self.client.connect(MQTT_CONFIG.get("broker"), 443, 60)
@@ -117,32 +127,64 @@ class MQTTControlUI:
             client.subscribe(f"{self.device_id}/#")
             self._add_event("MQTT Connecté")
 
+    def _add_alarm(self, msg):
+        # Vérifie si l'alarme existe déjà non-acquittée
+        for a in self.alarms:
+            if a["msg"] == msg and not a["ack"]:
+                return
+        self.alarms.insert(0, {"msg": msg, "ts": time.time(), "ack": False})
+
+    def _check_alarms(self):
+        # Seuils basiques
+        if self.light_lux > 10000:
+            self._add_alarm("Luminosité TRÈS FORTE (> 10000 lux)")
+        if abs(self.accel_x) > 5.0 or abs(self.accel_y) > 5.0:
+            self._add_alarm("Vibration / Inclinaison excessive détectée")
+
     def _on_message(self, client, userdata, msg):
         payload = msg.payload.decode('utf-8', errors='ignore')
-        if msg.topic.endswith("/status"):
+        topic = msg.topic
+        
+        if topic.endswith("/status"):
             try:
                 data = json.loads(payload)
-                self.remote_mode = data.get("mode", "---")
-                self.remote_sig = data.get("sig", 0)
-                self.rgb_r = data.get("r", 0)
-                self.rgb_g = data.get("g", 0)
-                self.rgb_b = data.get("b", 0)
-                self.accel_x = data.get("ax", 0)
-                self.accel_y = data.get("ay", 0)
-                self.accel_z = data.get("az", 0)
+                self.remote_mode = data.get("link", "LTE").upper()
+                self.remote_sig = data.get("rssi", 0)
+                self.uptime = data.get("uptime", 0)
             except: pass
-            return
         
-        clean_topic = msg.topic.replace(f"{self.device_id}/", "")
-        self._add_event(f"{clean_topic}: {payload}")
-        
-        # Sync LED depuis bouton physique
-        if "/led/1/set" in msg.topic: self.led1_on = (payload == "ON")
-        elif "/led/2/set" in msg.topic: self.led2_on = (payload == "ON")
+        elif topic.endswith("/telemetry/vibration"):
+            try:
+                data = json.loads(payload)
+                self.accel_x = data.get("x", 0.0)
+                self.accel_y = data.get("y", 0.0)
+                self.accel_z = data.get("z", 9.81)
+                self.uptime = data.get("ts", self.uptime)
+                self._check_alarms()
+            except: pass
+            
+        elif topic.endswith("/telemetry/light"):
+            try:
+                data = json.loads(payload)
+                self.light_lux = data.get("value", 0.0)
+                self._check_alarms()
+            except: pass
+            
+        elif "/actuators/led_1" in topic:
+            self.led1_on = (payload == "ON")
+        elif "/actuators/led_2" in topic:
+            self.led2_on = (payload == "ON")
+            
+        elif "/buttons/1/state" in topic:
+            self.btn1_state = payload
+        elif "/buttons/2/state" in topic:
+            self.btn2_state = payload
+
+        self._add_event(f"{topic.split('/')[-1]}: {payload}")
 
     def _add_event(self, msg):
         self.mqtt_events.append(f"[{time.strftime('%H:%M:%S')}] {msg}")
-        if len(self.mqtt_events) > 30: self.mqtt_events.pop(0)
+        if len(self.mqtt_events) > 15: self.mqtt_events.pop(0)
 
     def _draw_big_text(self, text, y, x, attr):
         font = {'O': ["███","█ █","█ █","█ █","███"], 'N': ["███","█ █","█ █","█ █","█ █"], 'F': ["███","█  ","██ ","█  ","█  "], ' ': ["   ","   ","   ","   ","   "]}
@@ -151,44 +193,62 @@ class MQTTControlUI:
             try: self.stdscr.addstr(y + i, x - len(line)//2, line, attr)
             except: pass
 
-    def _draw_rgb_mixer(self, start_y, start_x, bar_width):
-        h, w = self.stdscr.getmaxyx()
+    def _draw_tabs(self, w):
+        curses.init_pair(10, curses.COLOR_BLACK, curses.COLOR_CYAN)
+        curses.init_pair(11, curses.COLOR_WHITE, curses.COLOR_BLUE)
         
-        curses.init_pair(60, curses.COLOR_RED, curses.COLOR_RED)
-        curses.init_pair(61, curses.COLOR_GREEN, curses.COLOR_GREEN)
-        curses.init_pair(62, curses.COLOR_BLUE, curses.COLOR_BLUE)
-        curses.init_pair(63, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        
-        labels = [("R", self.rgb_r, 60), ("G", self.rgb_g, 61), ("B", self.rgb_b, 62)]
-        
-        for i, (lbl, val, pair) in enumerate(labels):
-            y = start_y + i * 3
-            fill = int((val / 4095) * bar_width)
-            r_norm = int((val / 4095) * 255)
+        self.tabs_rects = []
+        tab_w = w // len(self.pages)
+        for i, title in enumerate(self.pages):
+            attr = curses.color_pair(10) if i == self.current_page else curses.color_pair(11)
+            # Bouton de tabulation
+            label = f" {title} "
+            start_x = i * tab_w
+            end_x = start_x + tab_w - 1
             
-            if y < h:
-                self.stdscr.addstr(y, start_x, f"{lbl}: {r_norm:3d} ", curses.color_pair(63) | curses.A_BOLD)
+            # Remplissage
+            pad = (tab_w - len(label)) // 2
+            try:
+                self.stdscr.addstr(0, start_x, " "*pad + label + " "*(tab_w - pad - len(label)), attr | curses.A_BOLD)
+            except: pass
             
-            for x in range(bar_width):
-                col = start_x + 6 + x
-                if y < h and col < w:
-                    self.stdscr.addstr(y, col, "░", curses.color_pair(63))
-            
-            for x in range(fill):
-                col = start_x + 6 + x
-                if y < h and col < w:
-                    self.stdscr.addstr(y, col, "█", curses.color_pair(pair))
+            self.tabs_rects.append((0, start_x, 0, end_x, i)) # row_start, col_start, row_end, col_end, tab_index
 
+    def _draw_page_control(self, h, w):
+        # LEDs
+        btns = [(3, "LED ROUGE (Actuator 1)", self.led1_on, curses.COLOR_RED, "L1"),
+                (12, "LED VERTE (Actuator 2)", self.led2_on, curses.COLOR_GREEN, "L2")]
+        
+        for i, (y, lbl, st, col, bid) in enumerate(btns):
+            pair = i + 1
+            curses.init_pair(pair, curses.COLOR_WHITE, col)
+            attr = curses.color_pair(pair)
+            
+            for r in range(y, y+7):
+                if r < h: self.stdscr.addstr(r, 2, " "*30, attr)
+            
+            self.stdscr.addstr(y+1, 17 - len(lbl)//2, lbl, attr | curses.A_BOLD)
+            self._draw_big_text("ON" if st else "OFF", y+2, 17, attr)
+            self.buttons_rects.append((y, 2, y+6, 32, bid)) # rs, cs, re, ce, id
+            
+        # Physical Buttons state
+        curses.init_pair(12, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+        self.stdscr.addstr(3, 40, "ÉTAT DES BOUTONS PHYSIQUES", curses.color_pair(12) | curses.A_BOLD)
+        self.stdscr.addstr(5, 40, f"BOUTON 1 (Vert) : {self.btn1_state}")
+        self.stdscr.addstr(7, 40, f"BOUTON 2 (Rouge): {self.btn2_state}")
+        
+        # Events
+        self.stdscr.addstr(12, 40, "--- DERNIERS ÉVÉNEMENTS MQTT ---", curses.A_BOLD | curses.A_UNDERLINE)
+        for i, m in enumerate(self.mqtt_events[-10:]):
+            try: self.stdscr.addstr(13+i, 40, m[:w-42])
+            except: pass
+            
     def _draw_compass(self, center_y, center_x, radius):
         h, w = self.stdscr.getmaxyx()
-        
-        # Calcul de l'angle en inversant X et Y selon l'orientation du capteur
         angle = math.atan2(self.accel_x, -self.accel_y)
-        
         curses.init_pair(64, curses.COLOR_YELLOW, curses.COLOR_BLACK)
         curses.init_pair(65, curses.COLOR_WHITE, curses.COLOR_BLACK)
         
-        # Dessin du cadran
         for a in range(0, 360, 30):
             rad = math.radians(a)
             dx = int(radius * 1.5 * math.sin(rad))
@@ -202,7 +262,6 @@ class MQTTControlUI:
                 elif a == 270: self.stdscr.addstr(row, col, "O", curses.color_pair(64) | curses.A_BOLD)
                 else: self.stdscr.addstr(row, col, ".", curses.color_pair(65))
         
-        # Dessin de l'aiguille
         needle_len = radius - 1
         for i in range(1, needle_len + 1):
             nx = center_x + int(i * 1.5 * math.sin(angle))
@@ -211,57 +270,90 @@ class MQTTControlUI:
                 char = "●" if i == needle_len else "·"
                 self.stdscr.addstr(ny, nx, char, curses.color_pair(64) | curses.A_BOLD)
 
+    def _draw_page_telemetry(self, h, w):
+        curses.init_pair(20, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        
+        # Lumière
+        self.stdscr.addstr(3, 5, "CAPTEUR DE LUMIÈRE (BH1750)", curses.color_pair(20) | curses.A_BOLD)
+        self.stdscr.addstr(5, 5, f"Valeur : {self.light_lux:.1f} lux")
+        
+        # Jauge Lumière (Log scale)
+        bar_len = 30
+        lux_log = math.log10(max(1, self.light_lux))
+        fill = int(min(1.0, lux_log / 5.0) * bar_len) # max scale around 100,000 lux
+        self.stdscr.addstr(7, 5, "[" + "█"*fill + " "*(bar_len-fill) + "]")
+        
+        # Vibrations
+        self.stdscr.addstr(12, 5, "VIBRATIONS & INCLINAISON (MPU6050)", curses.color_pair(20) | curses.A_BOLD)
+        self.stdscr.addstr(14, 5, f"Axe X : {self.accel_x:6.2f} m/s²")
+        self.stdscr.addstr(15, 5, f"Axe Y : {self.accel_y:6.2f} m/s²")
+        self.stdscr.addstr(16, 5, f"Axe Z : {self.accel_z:6.2f} m/s²")
+        
+        # Boussole (Inclinaison)
+        self._draw_compass(15, 50, 6)
+
+    def _draw_page_alarms(self, h, w):
+        curses.init_pair(30, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(31, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(32, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
+        
+        self.stdscr.addstr(3, 2, "HISTORIQUE DES ALARMES", curses.A_BOLD | curses.A_UNDERLINE)
+        
+        # ACK ALL Bouton
+        ack_btn_y = 3
+        ack_btn_x = w - 20
+        self.stdscr.addstr(ack_btn_y, ack_btn_x, " [ ACQUITTEMENT ] ", curses.color_pair(32) | curses.A_BOLD)
+        self.buttons_rects.append((ack_btn_y, ack_btn_x, ack_btn_y, ack_btn_x+18, "ACK"))
+        
+        if not self.alarms:
+            self.stdscr.addstr(6, 2, "Aucune alarme enregistrée.", curses.color_pair(31))
+            return
+            
+        for i, al in enumerate(self.alarms[:15]):
+            ts_str = time.strftime('%H:%M:%S', time.localtime(al["ts"]))
+            ack_str = "[ACK]" if al["ack"] else "[!]"
+            attr = curses.color_pair(31) if al["ack"] else curses.color_pair(30)
+            self.stdscr.addstr(6+i, 2, f"{ts_str} {ack_str} {al['msg']}", attr | curses.A_BOLD)
+
+    def _draw_page_network(self, h, w):
+        curses.init_pair(40, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        self.stdscr.addstr(3, 2, "ÉTAT DU LIEN DE COMMUNICATION", curses.color_pair(40) | curses.A_BOLD)
+        
+        self.stdscr.addstr(5, 5, f"Identifiant Station : {self.device_id}")
+        self.stdscr.addstr(7, 5, f"Mode réseau         : {self.remote_mode}")
+        self.stdscr.addstr(8, 5, f"Qualité Signal (RSSI): {self.remote_sig} dBm")
+        
+        # Format Uptime
+        hrs = self.uptime // 3600
+        mins = (self.uptime % 3600) // 60
+        secs = self.uptime % 60
+        self.stdscr.addstr(10, 5, f"Temps de service    : {hrs:02d}h {mins:02d}m {secs:02d}s")
+        
+        # Jauge signal
+        sig_val = min(31, max(0, int(self.remote_sig))) # Pour GSM: 0-31
+        bar_len = 31
+        fill = sig_val
+        self.stdscr.addstr(12, 5, "Niveau RF: [" + "█"*fill + " "*(bar_len-fill) + "]")
+
+        # Bouton quitter la GUI
+        quit_y = h - 3
+        quit_x = w // 2 - 5
+        curses.init_pair(41, curses.COLOR_WHITE, curses.COLOR_RED)
+        self.stdscr.addstr(quit_y, quit_x, " QUITTER ", curses.color_pair(41) | curses.A_BOLD)
+        self.buttons_rects.append((quit_y, quit_x, quit_y, quit_x+8, "QT"))
+
     def _draw(self):
         h, w = self.stdscr.getmaxyx()
         self.stdscr.erase()
+        self.buttons_rects.clear()
         
-        curses.init_pair(10, curses.COLOR_BLACK, curses.COLOR_CYAN)
-        self.stdscr.addstr(0, 0, f" MODE: {self.remote_mode} | SIGNAL: {self.remote_sig} dBm ".ljust(w), curses.color_pair(10) | curses.A_BOLD)
+        self._draw_tabs(w)
         
-        sep_col = w // 2
+        if self.current_page == 0: self._draw_page_control(h, w)
+        elif self.current_page == 1: self._draw_page_telemetry(h, w)
+        elif self.current_page == 2: self._draw_page_alarms(h, w)
+        elif self.current_page == 3: self._draw_page_network(h, w)
         
-        # Boutons
-        btns = [(2, "LED ROUGE (Pin 15)", self.led1_on, curses.COLOR_RED, "L1"),
-                (10, "LED VERTE (Pin 27)", self.led2_on, curses.COLOR_GREEN, "L2"),
-                (18, "SWITCH WIFI/LTE", None, curses.COLOR_BLUE, "MD"),
-                (26, "QUITTER", None, curses.COLOR_YELLOW, "QT")]
-        
-        self.rects = []
-        for i, (y, lbl, st, col, bid) in enumerate(btns):
-            pair = i + 1
-            curses.init_pair(pair, curses.COLOR_BLACK if col == curses.COLOR_YELLOW else curses.COLOR_WHITE, col)
-            attr = curses.color_pair(pair)
-            for r in range(y, y+7): 
-                if r < h: self.stdscr.addstr(r, 1, " "*(sep_col-2), attr)
-            self.stdscr.addstr(y+1, sep_col//2 - len(lbl)//2, lbl, attr | curses.A_BOLD)
-            if st is not None: self._draw_big_text("ON" if st else "OFF", y+2, sep_col//2, attr)
-            self.rects.append((y, y+7, bid))
-        
-        # Mélangeur RVB
-        self._draw_rgb_mixer(34, 2, sep_col - 6)
-        
-        # Boussole
-        self._draw_compass(46, sep_col // 2, 5)
-        
-        # Logs
-        mid_h = h // 2
-        self.stdscr.addstr(1, sep_col+2, "--- ÉVÉNEMENTS MQTT ---", curses.A_BOLD | curses.A_UNDERLINE)
-        for i, m in enumerate(self.mqtt_events[-(mid_h-3):]):
-            try: self.stdscr.addstr(2+i, sep_col+2, m[:w-sep_col-3])
-            except: pass
-        
-        self.stdscr.addstr(mid_h, sep_col+2, "--- CONSOLE SÉRIE (FILAIRE) ---", curses.A_BOLD | curses.A_UNDERLINE)
-        while not self.serial_logs.empty():
-            self.serial_display.append(self.serial_logs.get_nowait())
-            if len(self.serial_display) > 100: self.serial_display.pop(0)
-        
-        for i, m in enumerate(self.serial_display[-(h-mid_h-2):]):
-            try: self.stdscr.addstr(mid_h+1+i, sep_col+2, m[:w-sep_col-3])
-            except: pass
-
-        for r in range(1, h): 
-            try: self.stdscr.addstr(r, sep_col, "│")
-            except: pass
         self.stdscr.refresh()
 
     def run(self):
@@ -271,6 +363,9 @@ class MQTTControlUI:
             self._draw()
             ch = self.stdscr.getch()
             if ch == ord('q'): break
+            elif ch == curses.KEY_RIGHT: self.current_page = (self.current_page + 1) % 4
+            elif ch == curses.KEY_LEFT: self.current_page = (self.current_page - 1) % 4
+            
             while not self.event_queue.empty():
                 ev = self.event_queue.get_nowait()
                 if ev[0] == "tap":
@@ -279,20 +374,25 @@ class MQTTControlUI:
                     dy = max(1, self.touch_reader.max_y - self.touch_reader.min_y)
                     tx = int(((ev[1] - self.touch_reader.min_x) / dx) * (w-1))
                     ty = int(((ev[2] - self.touch_reader.min_y) / dy) * (h-1))
-                    if tx < w // 2:
-                        for s, e, bid in self.rects:
-                            if s <= ty <= e:
-                                if bid == "L1": 
-                                    cmd = "OFF" if self.led1_on else "ON"
-                                    self.client.publish(f"{self.device_id}/led/1/set", cmd)
-                                elif bid == "L2": 
-                                    cmd = "OFF" if self.led2_on else "ON"
-                                    self.client.publish(f"{self.device_id}/led/2/set", cmd)
-                                elif bid == "MD": 
-                                    nm = "LTE" if self.remote_mode == "WIFI" else "WIFI"
-                                    self._add_event(f"ACTION: Switch vers {nm}")
-                                    self.client.publish(self.topic_mode, nm)
-                                elif bid == "QT": self.running = False
+                    
+                    # Verif Tabs
+                    for rs, cs, re, ce, idx in self.tabs_rects:
+                        if rs <= ty <= re and cs <= tx <= ce:
+                            self.current_page = idx
+                            
+                    # Verif Boutons de la page active
+                    for rs, cs, re, ce, bid in self.buttons_rects:
+                        if rs <= ty <= re and cs <= tx <= ce:
+                            if bid == "L1":
+                                cmd = "OFF" if self.led1_on else "ON"
+                                self.client.publish(f"{self.device_id}/actuators/led_1", cmd)
+                            elif bid == "L2":
+                                cmd = "OFF" if self.led2_on else "ON"
+                                self.client.publish(f"{self.device_id}/actuators/led_2", cmd)
+                            elif bid == "ACK":
+                                for a in self.alarms: a["ack"] = True
+                            elif bid == "QT":
+                                self.running = False
             time.sleep(0.05)
 
 def main(stdscr):
