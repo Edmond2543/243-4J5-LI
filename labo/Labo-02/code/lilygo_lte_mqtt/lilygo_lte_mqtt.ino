@@ -151,10 +151,12 @@ void setup() {
     esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY));
     esp_wifi_sta_wpa2_ent_set_username((uint8_t *)EAP_USERNAME, strlen(EAP_USERNAME));
     esp_wifi_sta_wpa2_ent_set_password((uint8_t *)EAP_PASSWORD, strlen(EAP_PASSWORD));
-    esp_wifi_sta_wpa2_ent_enable(); WiFi.begin(WIFI_SSID);
-    unsigned long start = millis();
-    while (WiFi.status() != WL_CONNECTED && millis()-start < 20000) { delay(500); Serial.print("."); }
-    if (WiFi.status() == WL_CONNECTED) { Serial.println("\n[WIFI] OK! IP: " + WiFi.localIP().toString()); ok = true; sslClient.setClient(&wifiClient); }
+    esp_wifi_sta_wpa2_ent_enable(); 
+    WiFi.begin(WIFI_SSID);
+    while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+    Serial.println("\n[WIFI] OK! IP: " + WiFi.localIP().toString()); 
+    ok = true; 
+    sslClient.setClient(&wifiClient);
   } else {
     Serial.println("[MODE] LTE CELLULAIRE");
     pinMode(MODEM_PWRKEY, OUTPUT); digitalWrite(MODEM_PWRKEY, HIGH); delay(100); digitalWrite(MODEM_PWRKEY, LOW); delay(1000); digitalWrite(MODEM_PWRKEY, HIGH);

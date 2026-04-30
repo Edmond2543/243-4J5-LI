@@ -217,7 +217,8 @@ class MQTTControlUI:
     def _draw_page_control(self, h, w):
         # LEDs
         btns = [(3, "LED ROUGE (Actuator 1)", self.led1_on, curses.COLOR_RED, "L1"),
-                (12, "LED VERTE (Actuator 2)", self.led2_on, curses.COLOR_GREEN, "L2")]
+                (12, "LED VERTE (Actuator 2)", self.led2_on, curses.COLOR_GREEN, "L2"),
+                (21, f"BASCULER LE MODE", "SW", curses.COLOR_BLUE, "MD")]
         
         for i, (y, lbl, st, col, bid) in enumerate(btns):
             pair = i + 1
@@ -228,7 +229,10 @@ class MQTTControlUI:
                 if r < h: self.stdscr.addstr(r, 2, " "*30, attr)
             
             self.stdscr.addstr(y+1, 17 - len(lbl)//2, lbl, attr | curses.A_BOLD)
-            self._draw_big_text("ON" if st else "OFF", y+2, 17, attr)
+            if isinstance(st, bool):
+                self._draw_big_text("ON" if st else "OFF", y+2, 17, attr)
+            else:
+                self._draw_big_text(str(st), y+2, 17, attr)
             self.buttons_rects.append((y, 2, y+6, 32, bid)) # rs, cs, re, ce, id
             
         # Physical Buttons state
@@ -389,6 +393,10 @@ class MQTTControlUI:
                             elif bid == "L2":
                                 cmd = "OFF" if self.led2_on else "ON"
                                 self.client.publish(f"{self.device_id}/actuators/led_2", cmd)
+                            elif bid == "MD":
+                                nm = "LTE" if self.remote_mode == "WIFI" else "WIFI"
+                                self.client.publish(f"{self.device_id}/config/mode/set", nm)
+                                self._add_event(f"ACTION: Mode -> {nm}")
                             elif bid == "ACK":
                                 for a in self.alarms: a["ack"] = True
                             elif bid == "QT":

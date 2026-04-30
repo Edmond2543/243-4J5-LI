@@ -24,7 +24,7 @@ DEVICE_ID = MQTT_CONFIG.get("device_id", "hydro-limoilou/poste-06")
 API_KEY = MQTT_CONFIG.get("groq_api_key", "")
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 # Using a faster/reliable model from Groq
-MODEL_NAME = "llama3-8b-8192" 
+MODEL_NAME = "openai/gpt-oss-20b" 
 
 # --- ETAT DES CAPTEURS ---
 sensor_data = {
