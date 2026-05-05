@@ -8,6 +8,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <BH1750.h>
+#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <esp_wpa2.h>
@@ -104,8 +105,23 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   String msg = ""; for(int i=0; i<length; i++) msg += (char)payload[i];
   Serial.println("[MQTT] Rx: " + String(topic) + " = " + msg);
   
-  if (strcmp(topic, LED_1_SET_TOPIC) == 0) digitalWrite(LED_RED, (msg == "ON") ? HIGH : LOW);
-  else if (strcmp(topic, LED_2_SET_TOPIC) == 0) digitalWrite(LED_GREEN, (msg == "ON") ? HIGH : LOW);
+  if (strcmp(topic, LED_1_SET_TOPIC) == 0 || strcmp(topic, LED_2_SET_TOPIC) == 0) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, msg);
+    if (!error && doc.containsKey("state")) {
+      String state = doc["state"].as<String>();
+      state.toLowerCase();
+      bool isOn = (state == "on");
+      if (strcmp(topic, LED_1_SET_TOPIC) == 0) digitalWrite(LED_RED, isOn ? HIGH : LOW);
+      else digitalWrite(LED_GREEN, isOn ? HIGH : LOW);
+    } else {
+      // Fallback au cas ou un msg brut est envoye
+      msg.toLowerCase();
+      bool isOn = (msg.indexOf("on") >= 0);
+      if (strcmp(topic, LED_1_SET_TOPIC) == 0) digitalWrite(LED_RED, isOn ? HIGH : LOW);
+      else digitalWrite(LED_GREEN, isOn ? HIGH : LOW);
+    }
+  }
   else if (strcmp(topic, MODE_SET_TOPIC) == 0) {
     bool targetWiFi = (msg == "WIFI");
     if (targetWiFi != useWiFi) { // PROTECTION BOUCLE : On ne reboot que si différent
@@ -216,6 +232,17 @@ void loop() {
                           ", \"unit\":\"lux\"" + 
                           ", \"ts\":" + String(uptime) + "}";
     mqttClient.publish(TELEMETRY_LIGHT_TOPIC, lightPayload.c_str());
+    
+    // 4. Alarmes (Light & Motion)
+    if (lux < 1.0) {
+      mqttClient.publish("hydro-limoilou/poste-06/alarms/light", "{\"status\":\"CRITICAL\",\"message\":\"Lumiere inexistante. Abris potentiellement effondre !\"}");
+    } else if (lux > 15000.0) {
+      mqttClient.publish("hydro-limoilou/poste-06/alarms/light", "{\"status\":\"WARNING\",\"message\":\"Lumiere tres forte. Abris expose au soleil !\"}");
+    }
+
+    if (abs(a.acceleration.x) > 3.0 || abs(a.acceleration.y) > 3.0 || a.acceleration.z < 6.0 || a.acceleration.z > 13.0) {
+      mqttClient.publish("hydro-limoilou/poste-06/alarms/motion", "{\"status\":\"CRITICAL\",\"message\":\"Mouvement violent ou chute du rack detectee !\"}");
+    }
   }
   
   // Lecture des boutons non-bloquante
@@ -226,18 +253,22 @@ void loop() {
     
     if (r != lastR) { 
       lastR = r; 
-      mqttClient.publish(BTN_2_STATE_TOPIC, (r == LOW) ? "PRESSED" : "RELEASED"); 
+      String btnState = (r == LOW) ? "{\"state\": \"pressed\"}" : "{\"state\": \"released\"}";
+      mqttClient.publish(BTN_2_STATE_TOPIC, btnState.c_str()); 
       if(r == LOW) {
         digitalWrite(LED_RED, !digitalRead(LED_RED)); 
-        mqttClient.publish(LED_1_SET_TOPIC, digitalRead(LED_RED) ? "ON" : "OFF");
+        String ledState = digitalRead(LED_RED) ? "{\"state\": \"on\"}" : "{\"state\": \"off\"}";
+        mqttClient.publish(LED_1_SET_TOPIC, ledState.c_str());
       }
     }
     if (g != lastG) { 
       lastG = g; 
-      mqttClient.publish(BTN_1_STATE_TOPIC, (g == LOW) ? "PRESSED" : "RELEASED"); 
+      String btnState = (g == LOW) ? "{\"state\": \"pressed\"}" : "{\"state\": \"released\"}";
+      mqttClient.publish(BTN_1_STATE_TOPIC, btnState.c_str()); 
       if(g == LOW) {
         digitalWrite(LED_GREEN, !digitalRead(LED_GREEN)); 
-        mqttClient.publish(LED_2_SET_TOPIC, digitalRead(LED_GREEN) ? "ON" : "OFF");
+        String ledState = digitalRead(LED_GREEN) ? "{\"state\": \"on\"}" : "{\"state\": \"off\"}";
+        mqttClient.publish(LED_2_SET_TOPIC, ledState.c_str());
       }
     }
   }

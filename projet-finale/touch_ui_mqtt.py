@@ -171,14 +171,37 @@ class MQTTControlUI:
             except: pass
             
         elif "/actuators/led_1" in topic:
-            self.led1_on = (payload == "ON")
+            try:
+                data = json.loads(payload)
+                self.led1_on = (data.get("state", "").lower() == "on")
+            except:
+                self.led1_on = (payload == "ON")
         elif "/actuators/led_2" in topic:
-            self.led2_on = (payload == "ON")
+            try:
+                data = json.loads(payload)
+                self.led2_on = (data.get("state", "").lower() == "on")
+            except:
+                self.led2_on = (payload == "ON")
             
         elif "/buttons/1/state" in topic:
-            self.btn1_state = payload
+            try:
+                data = json.loads(payload)
+                self.btn1_state = data.get("state", "unknown").upper()
+            except:
+                self.btn1_state = payload
         elif "/buttons/2/state" in topic:
-            self.btn2_state = payload
+            try:
+                data = json.loads(payload)
+                self.btn2_state = data.get("state", "unknown").upper()
+            except:
+                self.btn2_state = payload
+                
+        elif "/alarms/" in topic:
+            try:
+                data = json.loads(payload)
+                self._add_alarm(f"[{data.get('status', 'ALERTE')}] {data.get('message', 'Alarme capteur')}")
+            except:
+                self._add_alarm(payload)
 
         self._add_event(f"{topic.split('/')[-1]}: {payload}")
 
@@ -392,10 +415,10 @@ class MQTTControlUI:
                     for rs, cs, re, ce, bid in self.buttons_rects:
                         if rs <= ty <= re and cs <= tx <= ce:
                             if bid == "L1":
-                                cmd = "OFF" if self.led1_on else "ON"
+                                cmd = '{"state": "off"}' if self.led1_on else '{"state": "on"}'
                                 self.client.publish(f"{self.device_id}/actuators/led_1", cmd)
                             elif bid == "L2":
-                                cmd = "OFF" if self.led2_on else "ON"
+                                cmd = '{"state": "off"}' if self.led2_on else '{"state": "on"}'
                                 self.client.publish(f"{self.device_id}/actuators/led_2", cmd)
                             elif bid == "MD":
                                 nm = "LTE" if self.remote_mode == "WIFI" else "WIFI"
