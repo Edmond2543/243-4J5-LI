@@ -236,7 +236,7 @@ void loop() {
     // 4. Alarmes (Light & Motion)
     if (lux < 1.0) {
       mqttClient.publish("hydro-limoilou/poste-06/alarms/light", "{\"status\":\"CRITICAL\",\"message\":\"Lumiere inexistante. Abris potentiellement effondre !\"}");
-    } else if (lux > 15000.0) {
+    } else if (lux > 2000.0) {
       mqttClient.publish("hydro-limoilou/poste-06/alarms/light", "{\"status\":\"WARNING\",\"message\":\"Lumiere tres forte. Abris expose au soleil !\"}");
     }
 
