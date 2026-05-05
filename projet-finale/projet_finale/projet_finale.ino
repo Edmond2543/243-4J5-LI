@@ -227,12 +227,18 @@ void loop() {
     if (r != lastR) { 
       lastR = r; 
       mqttClient.publish(BTN_2_STATE_TOPIC, (r == LOW) ? "PRESSED" : "RELEASED"); 
-      if(r == LOW) digitalWrite(LED_RED, !digitalRead(LED_RED)); 
+      if(r == LOW) {
+        digitalWrite(LED_RED, !digitalRead(LED_RED)); 
+        mqttClient.publish(LED_1_SET_TOPIC, digitalRead(LED_RED) ? "ON" : "OFF");
+      }
     }
     if (g != lastG) { 
       lastG = g; 
       mqttClient.publish(BTN_1_STATE_TOPIC, (g == LOW) ? "PRESSED" : "RELEASED"); 
-      if(g == LOW) digitalWrite(LED_GREEN, !digitalRead(LED_GREEN)); 
+      if(g == LOW) {
+        digitalWrite(LED_GREEN, !digitalRead(LED_GREEN)); 
+        mqttClient.publish(LED_2_SET_TOPIC, digitalRead(LED_GREEN) ? "ON" : "OFF");
+      }
     }
   }
 }
