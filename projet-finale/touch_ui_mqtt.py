@@ -183,13 +183,13 @@ class MQTTControlUI:
             except:
                 self.led2_on = (payload == "ON")
             
-        elif "/buttons/1/state" in topic:
+        elif "/telemetry/btn_1" in topic:
             try:
                 data = json.loads(payload)
                 self.btn1_state = data.get("state", "unknown").upper()
             except:
                 self.btn1_state = payload
-        elif "/buttons/2/state" in topic:
+        elif "/telemetry/btn_2" in topic:
             try:
                 data = json.loads(payload)
                 self.btn2_state = data.get("state", "unknown").upper()

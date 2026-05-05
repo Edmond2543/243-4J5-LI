@@ -36,8 +36,8 @@ const char* TELEMETRY_VIBRATION_TOPIC = "hydro-limoilou/poste-06/telemetry/vibra
 const char* TELEMETRY_LIGHT_TOPIC = "hydro-limoilou/poste-06/telemetry/light";
 const char* LED_1_SET_TOPIC = "hydro-limoilou/poste-06/actuators/led_1";
 const char* LED_2_SET_TOPIC = "hydro-limoilou/poste-06/actuators/led_2";
-const char* BTN_1_STATE_TOPIC = "hydro-limoilou/poste-06/buttons/1/state";
-const char* BTN_2_STATE_TOPIC = "hydro-limoilou/poste-06/buttons/2/state";
+const char* BTN_1_STATE_TOPIC = "hydro-limoilou/poste-06/telemetry/btn_1";
+const char* BTN_2_STATE_TOPIC = "hydro-limoilou/poste-06/telemetry/btn_2";
 
 HardwareSerial SerialAT(1);
 Preferences preferences;
@@ -108,16 +108,27 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   if (strcmp(topic, LED_1_SET_TOPIC) == 0 || strcmp(topic, LED_2_SET_TOPIC) == 0) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, msg);
-    if (!error && doc.containsKey("state")) {
-      String state = doc["state"].as<String>();
-      state.toLowerCase();
-      bool isOn = (state == "on");
-      if (strcmp(topic, LED_1_SET_TOPIC) == 0) digitalWrite(LED_RED, isOn ? HIGH : LOW);
-      else digitalWrite(LED_GREEN, isOn ? HIGH : LOW);
+    bool isOn = false;
+    bool valid = false;
+    
+    if (!error && doc["state"].is<const char*>()) {
+      String stateStr = doc["state"].as<String>();
+      stateStr.toLowerCase();
+      isOn = (stateStr == "on");
+      valid = true;
     } else {
-      // Fallback au cas ou un msg brut est envoye
+      // Fallback
       msg.toLowerCase();
-      bool isOn = (msg.indexOf("on") >= 0);
+      if (msg.indexOf("on") >= 0) {
+        isOn = true;
+        valid = true;
+      } else if (msg.indexOf("off") >= 0) {
+        isOn = false;
+        valid = true;
+      }
+    }
+    
+    if (valid) {
       if (strcmp(topic, LED_1_SET_TOPIC) == 0) digitalWrite(LED_RED, isOn ? HIGH : LOW);
       else digitalWrite(LED_GREEN, isOn ? HIGH : LOW);
     }
@@ -250,24 +261,25 @@ void loop() {
     lastBtn = millis();
     int r = digitalRead(BTN_RED_PIN);
     int g = digitalRead(BTN_GREEN_PIN);
+    unsigned long uptime = millis() / 1000;
     
     if (r != lastR) { 
       lastR = r; 
-      String btnState = (r == LOW) ? "{\"state\": \"pressed\"}" : "{\"state\": \"released\"}";
+      String btnState = "{\"state\": \"" + String((r == LOW) ? "pressed" : "released") + "\", \"ts\": " + String(uptime) + "}";
       mqttClient.publish(BTN_2_STATE_TOPIC, btnState.c_str()); 
       if(r == LOW) {
         digitalWrite(LED_RED, !digitalRead(LED_RED)); 
-        String ledState = digitalRead(LED_RED) ? "{\"state\": \"on\"}" : "{\"state\": \"off\"}";
+        String ledState = "{\"state\": \"" + String(digitalRead(LED_RED) ? "on" : "off") + "\", \"ts\": " + String(uptime) + "}";
         mqttClient.publish(LED_1_SET_TOPIC, ledState.c_str());
       }
     }
     if (g != lastG) { 
       lastG = g; 
-      String btnState = (g == LOW) ? "{\"state\": \"pressed\"}" : "{\"state\": \"released\"}";
+      String btnState = "{\"state\": \"" + String((g == LOW) ? "pressed" : "released") + "\", \"ts\": " + String(uptime) + "}";
       mqttClient.publish(BTN_1_STATE_TOPIC, btnState.c_str()); 
       if(g == LOW) {
         digitalWrite(LED_GREEN, !digitalRead(LED_GREEN)); 
-        String ledState = digitalRead(LED_GREEN) ? "{\"state\": \"on\"}" : "{\"state\": \"off\"}";
+        String ledState = "{\"state\": \"" + String(digitalRead(LED_GREEN) ? "on" : "off") + "\", \"ts\": " + String(uptime) + "}";
         mqttClient.publish(LED_2_SET_TOPIC, ledState.c_str());
       }
     }
