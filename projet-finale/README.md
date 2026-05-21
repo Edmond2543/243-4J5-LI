@@ -14,6 +14,56 @@ L'objectif est d'assurer une télémétrie en temps réel via une connexion hybr
 
 Le microcontrôleur central est un **LilyGo T-SIM A7670G (ESP32)**.
 
+```mermaid
+flowchart LR
+    subgraph Microcontrôleur
+        ESP[LilyGo T-SIM A7670G ESP32]
+    end
+
+    subgraph Capteurs I2C 3.3V
+        MPU[MPU6050 Acceleromètre]
+        BH[BH1750 Luminosité]
+    end
+
+    subgraph Entrées et Sorties
+        BTN1((Bouton 1 Vert))
+        BTN2((Bouton 2 Rouge))
+        LEDR((LED Rouge))
+        LEDV((LED Verte))
+    end
+
+    %% Bus I2C et Alims
+    ESP -- "3.3V" --- MPU
+    ESP -- "GND" --- MPU
+    ESP -- "SDA (21)" --- MPU
+    ESP -- "SCL (22)" --- MPU
+    
+    ESP -- "3.3V" --- BH
+    ESP -- "GND" --- BH
+    ESP -- "SDA (21)" --- BH
+    ESP -- "SCL (22)" --- BH
+
+    %% Boutons (INPUT_PULLUP)
+    BTN1 -- "Pin 25" --- ESP
+    BTN2 -- "Pin 35" --- ESP
+    GND_BTN[GND] --- BTN1
+    GND_BTN --- BTN2
+
+    %% LEDs
+    ESP -- "Pin 32" --- RES1[Res. 220Ω] --- LEDR --- GND_LED[GND]
+    ESP -- "Pin 33" --- RES2[Res. 220Ω] --- LEDV --- GND_LED
+
+    classDef mcu fill:#f96,stroke:#333,stroke-width:2px,color:#000;
+    classDef sens fill:#9cf,stroke:#333,stroke-width:2px,color:#000;
+    classDef act fill:#fcc,stroke:#333,stroke-width:2px,color:#000;
+    classDef gnd fill:#000,stroke:#333,stroke-width:2px,color:#fff;
+
+    class ESP mcu;
+    class MPU,BH sens;
+    class BTN1,BTN2,LEDR,LEDV act;
+    class GND_BTN,GND_LED gnd;
+```
+
 | Composant | Broche ESP32 / LilyGo | Note |
 | :--- | :--- | :--- |
 | **MPU6050 (Vibrations)** | `SDA: 21` / `SCL: 22` | Bus I2C partagé. Alimentation en **3.3V**. |
